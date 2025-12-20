@@ -5,14 +5,21 @@
 package store.products;
 
 /**
- * Interface for items that have a price.
+ * Represents an item that has a price.
  */
-public interface PricedItem {
+public interface PricedItem{
 
     /**
      * Returns the price of the item.
-     *
      * @return price
      */
     double getPrice();
+
+    /**
+     * Updates the price.
+     * @param price new price
+     * @return true if valid
+     */
+    boolean setPrice(double price);
 }
+
