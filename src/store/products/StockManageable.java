@@ -5,31 +5,27 @@
 package store.products;
 
 /**
- * Interface for objects whose stock can be managed.
- * Allows increasing and decreasing stock values.
+ * Represents an object with manageable stock.
  */
-public interface StockManageable {
+public interface StockManageable{
 
     /**
-     * Returns the current stock amount.
-     *
-     * @return stock amount
+     * Returns current stock amount.
+     * @return stock
      */
     int getStock();
 
     /**
-     * Increases the stock by the given amount.
-     *
+     * Increases stock.
      * @param amount amount to add
-     * @return true if the amount is valid and stock updated
+     * @return true if valid
      */
     boolean increaseStock(int amount);
 
     /**
-     * Decreases the stock by the given amount.
-     *
+     * Decreases stock.
      * @param amount amount to remove
-     * @return true if the amount is valid and stock updated
+     * @return true if valid
      */
     boolean decreaseStock(int amount);
 }
