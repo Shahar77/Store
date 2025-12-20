@@ -6,7 +6,6 @@ package store.orders;
 
 import store.cart.CartItem;
 import store.core.Persistable;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +13,10 @@ import java.util.Objects;
 
 /**
  * Represents a single order in the store system.
+ * Contains items,total amount,status and creation date.
  */
 public class Order implements Persistable{
+
     private int orderID;
     private List<CartItem> items;
     private double totalAmount;
@@ -24,57 +25,60 @@ public class Order implements Persistable{
 
     /**
      * Creates a new order.
-     * @param orderID order id
-     * @param items items list
-     * @param totalAmount total amount
+     * @param orderID unique order identifier
+     * @param items list of cart items
+     * @param totalAmount total price of the order
      */
     public Order(int orderID,List<CartItem> items,double totalAmount){
         this.orderID=orderID;
-        this.items=new ArrayList<>(items);
+        this.items=new ArrayList<>();
+        for(int i=0;i<items.size();i++){
+            this.items.add(items.get(i));
+        }
         this.totalAmount=totalAmount;
-        status=OrderStatus.NEW;
-        createdAt=LocalDateTime.now();
+        this.status=OrderStatus.NEW;
+        this.createdAt=LocalDateTime.now();
     }
 
     /**
-     * @return order id
+     * @return order ID
      */
     public int getOrderID(){
         return orderID;
     }
 
     /**
-     * @return total amount
+     * @return total amount of the order
      */
     public double getTotalAmount(){
         return totalAmount;
     }
 
     /**
-     * @return status
+     * @return order status
      */
     public OrderStatus getStatus(){
         return status;
     }
 
     /**
-     * @return created time
+     * @return creation date and time
      */
     public LocalDateTime getCreatedAt(){
         return createdAt;
     }
 
     /**
-     * Returns copy of items list.
-     * @return items copy
+     * Returns a copy of the order items.
+     * @return list of cart items
      */
     public List<CartItem> getItems(){
         return new ArrayList<>(items);
     }
 
     /**
-     * Moves status from NEW to PAID.
-     * @return true if changed
+     * Changes order status from NEW to PAID.
+     * @return true if status changed
      */
     public boolean pay(){
         if(status==OrderStatus.NEW){
@@ -85,8 +89,8 @@ public class Order implements Persistable{
     }
 
     /**
-     * Moves status from PAID to SHIPPED.
-     * @return true if changed
+     * Changes order status from PAID to SHIPPED.
+     * @return true if status changed
      */
     public boolean ship(){
         if(status==OrderStatus.PAID){
@@ -97,8 +101,8 @@ public class Order implements Persistable{
     }
 
     /**
-     * Moves status from SHIPPED to DELIVERED.
-     * @return true if changed
+     * Changes order status from SHIPPED to DELIVERED.
+     * @return true if status changed
      */
     public boolean deliver(){
         if(status==OrderStatus.SHIPPED){
@@ -109,7 +113,8 @@ public class Order implements Persistable{
     }
 
     /**
-     * Saves the order to a file (not implemented here).
+     * Saves the order to a file.
+     * Implementation will be handled by IO classes.
      * @param path file path
      */
     @Override
@@ -117,20 +122,24 @@ public class Order implements Persistable{
     }
 
     /**
-     * Orders equal if same orderID.
-     * @param o other
+     * Orders are equal if they have the same ID.
+     * @param o other object
      * @return true if equal
      */
     @Override
     public boolean equals(Object o){
-        if(this==o)return true;
-        if(!(o instanceof Order))return false;
+        if(this==o){
+            return true;
+        }
+        if(!(o instanceof Order)){
+            return false;
+        }
         Order other=(Order)o;
         return orderID==other.orderID;
     }
 
     /**
-     * @return hash code
+     * @return hash code based on order ID
      */
     @Override
     public int hashCode(){
@@ -138,10 +147,13 @@ public class Order implements Persistable{
     }
 
     /**
-     * @return summary string
+     * @return textual representation of the order
      */
     @Override
     public String toString(){
-        return "Order{orderID="+orderID+", status="+status+", totalAmount="+totalAmount+", createdAt="+createdAt+"}";
+        return "Order{orderID="+orderID+
+               ",status="+status+
+               ",totalAmount="+totalAmount+
+               ",createdAt="+createdAt+"}";
     }
 }
