@@ -5,82 +5,90 @@
 package store.core;
 
 import store.cart.Cart;
-import store.engine.StoreEngine;
-import store.orders.Order;
 import store.products.Product;
-
+import store.orders.Order;
+import store.engine.StoreEngine;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Represents a customer in the store system.
- * Each customer owns a cart and an order history.
+ * Each customer owns a cart and order history.
+ * Uses StoreEngine to create orders.
  */
 public class Customer extends User{
+
     private Cart cart;
     private List<Order> orderHistory;
     private StoreEngine engine;
 
     /**
      * Creates a new customer.
-     * @param username unique username
+     * @param username customer username
      * @param email customer email
      * @param engine reference to store engine
      */
     public Customer(String username,String email,StoreEngine engine){
         super(username,email);
+        this.cart=new Cart();
+        this.orderHistory=new ArrayList<>();
         this.engine=engine;
-        cart=new Cart();
-        orderHistory=new ArrayList<>();
     }
 
     /**
-     * Returns the customer's cart.
-     * @return cart
+     * @return customer's shopping cart
      */
     public Cart getCart(){
         return cart;
     }
 
     /**
-     * Returns all previous orders of the customer.
-     * @return list of orders
+     * @return list of customer's past orders
      */
     public List<Order> getOrderHistory(){
         return orderHistory;
     }
 
     /**
-     * Adds a product to the cart if stock allows.
-     * @param product product to add
-     * @param quantity quantity
+     * Adds a product to the cart.
+     * @param p product to add
+     * @param quantity quantity to add
      * @return true if added successfully
      */
-    public boolean addToCart(Product product,int quantity){
-        if(product==null)return false;
-        if(quantity<=0)return false;
-        if(product.getStock()<quantity)return false;
-        return cart.addItem(product,quantity);
+    public boolean addToCart(Product p,int quantity){
+        if(p==null||quantity<=0){
+            return false;
+        }
+        if(p.getStock()<quantity){
+            return false;
+        }
+        return cart.addItem(p,quantity);
     }
 
     /**
      * Removes a product from the cart.
-     * @param product product to remove
+     * @param p product to remove
      * @return true if removed
      */
-    public boolean removeFromCart(Product product){
-        return cart.removeItem(product);
+    public boolean removeFromCart(Product p){
+        if(p==null){
+            return false;
+        }
+        return cart.removeItem(p);
     }
 
     /**
-     * Performs checkout: creates order and clears cart.
+     * Creates an order from the cart using StoreEngine.
+     * Clears the cart after successful checkout.
      * @return true if checkout succeeded
      */
     public boolean checkout(){
-        Order order=engine.createOrderFromCart(cart);
-        if(order==null)return false;
+        Order order=engine.checkout();
+        if(order==null){
+            return false;
+        }
         orderHistory.add(order);
-        cart.clear();
         return true;
     }
 }
+
