@@ -7,45 +7,28 @@ package store.products;
 import java.awt.Color;
 
 /**
- * Represents a book product sold in the store.
- * Extends Product with author and page count information.
+ * Represents a book product.
  */
-public class BookProduct extends Product {
-
+public class BookProduct extends Product{
     private String author;
     private int pages;
 
     /**
-     * Creates a new BookProduct.
-     *
-     * @param name book title
-     * @param price book price
-     * @param stock amount in stock
-     * @param description book description
-     * @param category product category, must be BOOKS
-     * @param color display color
-     * @param imagePath path to product image
-     * @param author book author
-     * @param pages number of pages
+     * Creates a new book product.
      */
-    public BookProduct(String name, double price, int stock,
-                       String description, Category category,
-                       Color color, String imagePath,
-                       String author, int pages) {
-        super(name, price, stock, description, Category.BOOKS, color, imagePath);
-        this.author = author;
-        this.pages = pages;
+    public BookProduct(String name,double price,int stock,String description,Color color,String imagePath,String author,int pages){
+        super(name,price,stock,description,Category.BOOKS,color,imagePath);
+        this.author=author;
+        this.pages=pages;
     }
 
     /**
-     * Returns a detailed textual representation of the book.
-     *
-     * @return book details string
+     * Returns detailed book info.
      */
     @Override
-    public String toString() {
-        return super.toString()
-                + "\nAuthor: " + author
-                + "\nPages: " + pages;
+    public String getDisplayDetails(){
+        return super.getDisplayDetails()+
+               "\nAuthor: "+author+
+               "\nPages: "+pages;
     }
 }
