@@ -7,76 +7,59 @@ package store.cart;
 import store.products.Product;
 
 /**
- * Represents a single item inside a shopping cart.
- * Contains a product and its quantity.
+ * Represents a single item inside the shopping cart.
  */
-public class CartItem {
-
+public class CartItem{
     private Product product;
     private int quantity;
 
     /**
-     * Creates a new CartItem with the given product and quantity.
-     *
+     * Creates a new cart item.
      * @param product product to store
-     * @param quantity initial quantity
+     * @param quantity quantity amount
      */
-    public CartItem(Product product, int quantity) {
-        this.product = product;
-        this.quantity = quantity;
+    public CartItem(Product product,int quantity){
+        this.product=product;
+        this.quantity=quantity;
     }
 
     /**
-     * Returns the product of this cart item.
-     *
-     * @return product
+     * Returns the product.
      */
-    public Product getProduct() {
+    public Product getProduct(){
         return product;
     }
 
     /**
-     * Returns the quantity of the product.
-     *
-     * @return quantity
+     * Returns quantity.
      */
-    public int getQuantity() {
+    public int getQuantity(){
         return quantity;
     }
 
     /**
-     * Sets a new quantity for the product.
-     *
+     * Updates quantity.
      * @param q new quantity
-     * @return true if quantity is valid and updated
+     * @return true if valid
      */
-    public boolean setQuantity(int q) {
-        if (q > 0) {
-            this.quantity = q;
-            return true;
-        }
-        return false;
+    public boolean setQuantity(int q){
+        if(q<=0)return false;
+        quantity=q;
+        return true;
     }
 
     /**
-     * Calculates the total price for this cart item.
-     *
-     * @return total price
+     * Calculates total price for this item.
      */
-    public double getTotalPrice() {
-        return product.getPrice() * quantity;
+    public double getTotalPrice(){
+        return product.getPrice()*quantity;
     }
 
-    /**
-     * Two CartItem objects are equal if they contain the same product.
-     *
-     * @param o object to compare
-     * @return true if products are equal
-     */
     @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof CartItem)) return false;
-        CartItem other = (CartItem) o;
+    public boolean equals(Object o){
+        if(!(o instanceof CartItem))return false;
+        CartItem other=(CartItem)o;
         return product.equals(other.product);
     }
 }
+
