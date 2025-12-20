@@ -6,80 +6,74 @@ package store.engine;
 
 import store.cart.Cart;
 import store.cart.CartItem;
+import store.core.Customer;
 import store.orders.Order;
 import store.products.Product;
-
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Central business logic of the store system.
- * Responsible for managing products and creating orders.
+ * Central logic engine of the store.
+ * Manages products, customers and orders.
  */
-public class StoreEngine {
-
+public class StoreEngine{
     private List<Product> products;
+    private List<Order> allOrders;
+    private List<Customer> customers;
     private int nextOrderId;
 
     /**
-     * Creates a new StoreEngine with empty product list
-     * and initializes the order ID counter.
+     * Creates a new store engine.
      */
-    public StoreEngine() {
-        this.products = new ArrayList<>();
-        this.nextOrderId = 1;
+    public StoreEngine(){
+        products=new ArrayList<>();
+        allOrders=new ArrayList<>();
+        customers=new ArrayList<>();
+        nextOrderId=1;
     }
 
     /**
      * Adds a product to the store.
-     *
      * @param p product to add
      */
-    public void addProduct(Product p) {
-        if (p != null) {
-            products.add(p);
-        }
+    public void addProduct(Product p){
+        products.add(p);
     }
 
     /**
-     * Returns all products that are currently in stock.
-     *
-     * @return list of available products
+     * Returns all available products.
+     * @return list of products with stock>0
      */
-    public List<Product> getAvailableProducts() {
-        List<Product> available = new ArrayList<>();
-        for (Product p : products) {
-            if (p.getStock() > 0) {
-                available.add(p);
-            }
+    public List<Product> getAvailableProducts(){
+        List<Product> res=new ArrayList<>();
+        for(Product p:products){
+            if(p.getStock()>0)res.add(p);
         }
-        return available;
+        return res;
     }
 
     /**
-     * Creates an order from the given shopping cart.
-     * The cart will be cleared after successful order creation.
-     *
-     * @param cart shopping cart
-     * @return created Order or null if cart is empty or null
+     * Registers a new customer.
+     * @param c customer
+     * @return true if unique username
      */
-    public Order createOrderFromCart(Cart cart) {
-        if (cart == null || cart.getItems().isEmpty()) {
-            return null;
+    public boolean registerCustomer(Customer c){
+        for(Customer ex:customers){
+            if(ex.getUsername().equals(c.getUsername()))return false;
         }
+        customers.add(c);
+        return true;
+    }
 
-        List<CartItem> itemsCopy = new ArrayList<>();
-        for (CartItem ci : cart.getItems()) {
-            itemsCopy.add(ci);
-        }
-
-        Order order = new Order(
-                nextOrderId++,
-                itemsCopy,
-                cart.calculateTotal()
-        );
-
-        cart.clear();
+    /**
+     * Creates an order from a cart.
+     * @param cart cart to checkout
+     * @return created order
+     */
+    public Order createOrderFromCart(Cart cart){
+        List<CartItem> copy=new ArrayList<>(cart.getItems());
+        Order order=new Order(nextOrderId++,copy,cart.calculateTotal());
+        allOrders.add(order);
         return order;
     }
 }
