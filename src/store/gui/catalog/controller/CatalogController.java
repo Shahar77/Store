@@ -2,61 +2,46 @@
 // id : 329185771
 // name : Shahar Ezra
 // id : 329186118
-package store.gui.catalog.controller;
+package store.gui.cart.controller;
 
-import store.engine.StoreEngine;
-import store.gui.catalog.ProductCatalogPanel;
-import store.products.Category;
+import store.cart.Cart;
 import store.products.Product;
 
-import javax.swing.*;
-import java.util.List;
-
 /**
- * Controller for product catalog UI.
+ * Controller for cart operations.
  */
-public class CatalogController{
-    private final StoreEngine engine;
+public class CartController{
+    private final Cart cart;
 
     /**
-     * Creates a new catalog controller.
-     * @param engine store engine
+     * Creates controller.
+     * @param cart cart
      */
-    public CatalogController(StoreEngine engine){
-        this.engine=engine;
+    public CartController(Cart cart){
+        this.cart=cart;
     }
 
     /**
-     * Creates the catalog panel.
-     * @return panel
+     * Increases quantity of product by 1.
+     * @param p product
      */
-    public JPanel createCatalogPanel(){
-        List<Product> products=engine.getAvailableProducts();
-        return new ProductCatalogPanel(products,this);
+    public void increase(Product p){
+        cart.addItem(p,1);
     }
 
     /**
-     * Filters products by text and category.
-     * If category is null, returns all categories.
-     * @param text search text
-     * @param category category or null
-     * @return filtered list
+     * Decreases quantity of product by 1.
+     * @param p product
      */
-    public List<Product> filter(String text,Category category){
-        String t=text==null?"":text.trim().toLowerCase();
-        return engine.getAvailableProducts().stream()
-                .filter(p->t.isEmpty()||p.getName().toLowerCase().contains(t))
-                .filter(p->category==null||p.getCategory()==category)
-                .toList();
+    public void decrease(Product p){
+        cart.decreaseItem(p);
     }
 
     /**
-     * Adds product to active customer's cart.
-     * @param product product
-     * @param quantity quantity
-     * @return true if added
+     * Removes product from cart.
+     * @param p product
      */
-    public boolean addToCart(Product product,int quantity){
-        return engine.addToCart(product,quantity);
+    public void remove(Product p){
+        cart.removeItem(p);
     }
 }
