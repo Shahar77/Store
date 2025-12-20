@@ -5,33 +5,40 @@
 package store.gui;
 
 import store.engine.StoreEngine;
+import store.gui.cart.CartPanel;
 import store.gui.catalog.controller.CatalogController;
 
 import javax.swing.*;
 import java.awt.*;
 
 /**
- * Main window of the store application.
- * Hosts the catalog view and serves as the primary GUI container.
+ * Main application window.
  */
-public class StoreWindow extends JFrame {
+public class StoreWindow extends JFrame{
+    private final StoreEngine engine;
 
     /**
-     * Creates the main store window and initializes the catalog panel.
-     *
-     * @param engine store engine instance
+     * Creates the main window.
+     * @param engine store engine
      */
-    public StoreWindow(StoreEngine engine) {
+    public StoreWindow(StoreEngine engine){
+        this.engine=engine;
 
         setTitle("Store");
-        setSize(900, 600);
+        setSize(1000,650);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        CatalogController controller = new CatalogController(engine);
-        JPanel catalogPanel = controller.createCatalogPanel();
+        CatalogController catalogController=new CatalogController(engine);
+        JPanel catalogPanel=catalogController.createCatalogPanel();
 
-        add(new JScrollPane(catalogPanel), BorderLayout.CENTER);
+        JPanel cartPanel=new CartPanel(engine.getActiveCustomer());
+
+        JSplitPane split=new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,new JScrollPane(catalogPanel),cartPanel);
+        split.setDividerLocation(650);
+
+        add(split,BorderLayout.CENTER);
     }
 }
+
