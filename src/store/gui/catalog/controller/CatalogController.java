@@ -2,46 +2,75 @@
 // id : 329185771
 // name : Shahar Ezra
 // id : 329186118
-package store.gui.cart.controller;
+package store.gui.catalog.controller;
 
-import store.cart.Cart;
+import store.engine.StoreEngine;
 import store.products.Product;
+import store.products.Category;
+import store.gui.catalog.ProductCatalogPanel;
+
+import javax.swing.JPanel;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
- * Controller for cart operations.
+ * Controller for the product catalog screen.
+ * Handles filtering and cart interactions.
  */
-public class CartController{
-    private final Cart cart;
+public class CatalogController{
+
+    private StoreEngine engine;
 
     /**
-     * Creates controller.
-     * @param cart cart
+     * Creates a catalog controller.
+     * @param engine store engine instance
      */
-    public CartController(Cart cart){
-        this.cart=cart;
+    public CatalogController(StoreEngine engine){
+        this.engine=engine;
     }
 
     /**
-     * Increases quantity of product by 1.
-     * @param p product
+     * Creates the catalog panel for the GUI.
+     * @return catalog panel
      */
-    public void increase(Product p){
-        cart.addItem(p,1);
+    public JPanel createCatalogPanel(){
+        return new ProductCatalogPanel(engine.getAvailableProducts(),this);
     }
 
     /**
-     * Decreases quantity of product by 1.
-     * @param p product
+     * Filters products by text and category.
+     * @param text search text
+     * @param category selected category or null
+     * @return filtered list of products
      */
-    public void decrease(Product p){
-        cart.decreaseItem(p);
+    public List<Product> filter(String text,Category category){
+        List<Product> result=new ArrayList<>();
+        List<Product> products=engine.getAvailableProducts();
+
+        for(int i=0;i<products.size();i++){
+            Product p=products.get(i);
+
+            if(text!=null&&!text.isEmpty()){
+                if(!p.getName().toLowerCase().contains(text.toLowerCase())){
+                    continue;
+                }
+            }
+
+            if(category!=null&&p.getCategory()!=category){
+                continue;
+            }
+
+            result.add(p);
+        }
+        return result;
     }
 
     /**
-     * Removes product from cart.
-     * @param p product
+     * Adds a product to the cart.
+     * @param p product to add
+     * @return true if added successfully
      */
-    public void remove(Product p){
-        cart.removeItem(p);
+    public boolean addToCart(Product p){
+        return engine.addToCart(p);
     }
 }
