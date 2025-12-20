@@ -7,132 +7,141 @@ package store.orders;
 import store.cart.CartItem;
 import store.core.Persistable;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents a single order in the store system.
- * Contains order items, total amount and order status.
  */
-public class Order implements Persistable {
-
+public class Order implements Persistable{
     private int orderID;
     private List<CartItem> items;
     private double totalAmount;
     private OrderStatus status;
+    private LocalDateTime createdAt;
 
     /**
-     * Creates a new Order.
-     *
-     * @param orderID unique order identifier
-     * @param items list of items in the order
-     * @param totalAmount total price of the order
+     * Creates a new order.
+     * @param orderID order id
+     * @param items items list
+     * @param totalAmount total amount
      */
-    public Order(int orderID, List<CartItem> items, double totalAmount) {
-        this.orderID = orderID;
-        this.items = new ArrayList<>();
-        for (CartItem ci : items) {
-            this.items.add(ci);
-        }
-        this.totalAmount = totalAmount;
-        this.status = OrderStatus.NEW;
+    public Order(int orderID,List<CartItem> items,double totalAmount){
+        this.orderID=orderID;
+        this.items=new ArrayList<>(items);
+        this.totalAmount=totalAmount;
+        status=OrderStatus.NEW;
+        createdAt=LocalDateTime.now();
     }
 
     /**
-     * Returns the order ID.
-     *
-     * @return order ID
+     * @return order id
      */
-    public int getOrderID() {
+    public int getOrderID(){
         return orderID;
     }
 
     /**
-     * Returns the total amount of the order.
-     *
      * @return total amount
      */
-    public double getTotalAmount() {
+    public double getTotalAmount(){
         return totalAmount;
     }
 
     /**
-     * Returns the current status of the order.
-     *
-     * @return order status
+     * @return status
      */
-    public OrderStatus getStatus() {
+    public OrderStatus getStatus(){
         return status;
     }
 
     /**
-     * Returns a copy of the order items.
-     *
-     * @return list of cart items
+     * @return created time
      */
-    public List<CartItem> getItems() {
+    public LocalDateTime getCreatedAt(){
+        return createdAt;
+    }
+
+    /**
+     * Returns copy of items list.
+     * @return items copy
+     */
+    public List<CartItem> getItems(){
         return new ArrayList<>(items);
     }
 
     /**
-     * Marks the order as paid.
-     *
-     * @return true if status was changed successfully
+     * Moves status from NEW to PAID.
+     * @return true if changed
      */
-    public boolean pay() {
-        if (status == OrderStatus.NEW) {
-            status = OrderStatus.PAID;
+    public boolean pay(){
+        if(status==OrderStatus.NEW){
+            status=OrderStatus.PAID;
             return true;
         }
         return false;
     }
 
     /**
-     * Marks the order as shipped.
-     *
-     * @return true if status was changed successfully
+     * Moves status from PAID to SHIPPED.
+     * @return true if changed
      */
-    public boolean ship() {
-        if (status == OrderStatus.PAID) {
-            status = OrderStatus.SHIPPED;
+    public boolean ship(){
+        if(status==OrderStatus.PAID){
+            status=OrderStatus.SHIPPED;
             return true;
         }
         return false;
     }
 
     /**
-     * Marks the order as delivered.
-     *
-     * @return true if status was changed successfully
+     * Moves status from SHIPPED to DELIVERED.
+     * @return true if changed
      */
-    public boolean deliver() {
-        if (status == OrderStatus.SHIPPED) {
-            status = OrderStatus.DELIVERED;
+    public boolean deliver(){
+        if(status==OrderStatus.SHIPPED){
+            status=OrderStatus.DELIVERED;
             return true;
         }
         return false;
     }
 
     /**
-     * Saves the order to a file.
-     * Not implemented in this version.
-     *
+     * Saves the order to a file (not implemented here).
      * @param path file path
      */
     @Override
-    public void saveToFile(String path) {
-        // optional implementation
+    public void saveToFile(String path){
     }
 
     /**
-     * Returns a textual representation of the order.
-     *
-     * @return order description
+     * Orders equal if same orderID.
+     * @param o other
+     * @return true if equal
      */
     @Override
-    public String toString() {
-        return "Order{orderID=" + orderID +
-                ", status=" + status +
-                ", totalAmount=" + totalAmount + "}";
+    public boolean equals(Object o){
+        if(this==o)return true;
+        if(!(o instanceof Order))return false;
+        Order other=(Order)o;
+        return orderID==other.orderID;
+    }
+
+    /**
+     * @return hash code
+     */
+    @Override
+    public int hashCode(){
+        return Objects.hash(orderID);
+    }
+
+    /**
+     * @return summary string
+     */
+    @Override
+    public String toString(){
+        return "Order{orderID="+orderID+", status="+status+", totalAmount="+totalAmount+", createdAt="+createdAt+"}";
     }
 }
