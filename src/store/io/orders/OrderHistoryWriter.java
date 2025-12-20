@@ -10,27 +10,18 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 /**
- * Utility class responsible for saving order history to a file.
+ * Writes order history entries to a CSV file.
  */
-public class OrderHistoryWriter {
-
+public class OrderHistoryWriter{
     /**
-     * Writes a single order to a file.
-     * Data is appended to the file if it already exists.
-     *
-     * @param order order to write
-     * @param path destination file path
-     * @throws IOException if writing to file fails
+     * Appends an order to file.
+     * @param order order
+     * @param path file path
+     * @throws IOException if file write fails
      */
-    public static void write(Order order, String path) throws IOException {
-        if (order == null || path == null) return;
-
-        FileWriter writer = new FileWriter(path, true);
-        writer.write(
-                order.getOrderID() + "," +
-                        order.getTotalAmount() + "," +
-                        order.getStatus() + "\n"
-        );
+    public static void write(Order order,String path) throws IOException{
+        FileWriter writer=new FileWriter(path,true);
+        writer.write(order.getOrderID()+","+order.getTotalAmount()+","+order.getCreatedAt()+","+order.getItems().size()+"\n");
         writer.close();
     }
 }
