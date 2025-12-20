@@ -4,8 +4,8 @@
 // id : 329186118
 package store.gui.catalog;
 
-import store.products.Product;
 import store.gui.catalog.controller.CatalogController;
+import store.products.Product;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,39 +13,75 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 /**
- * Visual card component representing a single product in the catalog grid.
- * Displays basic product information and opens details on click.
+ * Small UI card that represents a product inside the catalog grid.
  */
-public class ProductCard extends JPanel {
-
-    private Product product;
-    private CatalogController controller;
+public class ProductCard extends JPanel{
+    private final Product product;
+    private final CatalogController controller;
 
     /**
-     * Creates a new ProductCard for the given product.
-     *
-     * @param product product to display
-     * @param controller catalog controller
+     * Creates a product card.
+     * @param product product
+     * @param controller controller
      */
-    public ProductCard(Product product, CatalogController controller) {
-        this.product = product;
-        this.controller = controller;
+    public ProductCard(Product product,CatalogController controller){
+        this.product=product;
+        this.controller=controller;
 
         setLayout(new BorderLayout());
-        setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+        setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY,1));
+        setBackground(Color.WHITE);
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        setToolTipText(product.getDisplayDetails());
 
-        JLabel nameLabel = new JLabel(product.getDisplayName(), SwingConstants.CENTER);
-        JLabel priceLabel = new JLabel("₪" + product.getPrice(), SwingConstants.CENTER);
+        JLabel imageLabel=createImageLabel(product.getImagePath());
+        JLabel nameLabel=new JLabel(product.getName(),SwingConstants.CENTER);
+        JLabel priceLabel=new JLabel("₪"+product.getPrice(),SwingConstants.CENTER);
 
-        add(nameLabel, BorderLayout.NORTH);
-        add(priceLabel, BorderLayout.SOUTH);
+        JPanel infoPanel=new JPanel(new GridLayout(2,1));
+        infoPanel.setBackground(Color.WHITE);
+        infoPanel.add(nameLabel);
+        infoPanel.add(priceLabel);
 
-        addMouseListener(new MouseAdapter() {
+        add(imageLabel,BorderLayout.CENTER);
+        add(infoPanel,BorderLayout.SOUTH);
+
+        MouseAdapter clickListener=new MouseAdapter(){
             @Override
-            public void mouseClicked(MouseEvent e) {
-                new ProductDetailsDialog(product);
+            public void mouseClicked(MouseEvent e){
+                new ProductDetailsDialog(product,controller);
             }
-        });
+        };
+
+        addMouseListener(clickListener);
+        imageLabel.addMouseListener(clickListener);
+        infoPanel.addMouseListener(clickListener);
+        nameLabel.addMouseListener(clickListener);
+        priceLabel.addMouseListener(clickListener);
+    }
+
+    /**
+     * Creates an image label from path, with fallback.
+     * @param path image path
+     * @return label
+     */
+    private JLabel createImageLabel(String path){
+        JLabel label=new JLabel("",SwingConstants.CENTER);
+        label.setPreferredSize(new Dimension(150,200));
+        ImageIcon icon=null;
+
+        if(path!=null&&!path.isEmpty()){
+            icon=new ImageIcon(path);
+        }
+
+        if(icon==null||icon.getIconWidth()<=0){
+            label.setText("No Image");
+            return label;
+        }
+
+        Image scaled=icon.getImage().getScaledInstance(120,160,Image.SCALE_SMOOTH);
+        label.setIcon(new ImageIcon(scaled));
+        return label;
     }
 }
+
