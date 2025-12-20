@@ -5,16 +5,10 @@
 package store.products;
 
 /**
- * Enumeration of all product categories in the store.
+ * Product categories.
  */
-public enum Category {
-
-    /** Book products */
+public enum Category{
     BOOKS,
-
-    /** Clothing products */
     CLOTHING,
-
-    /** Electronic products */
     ELECTRONICS
 }
