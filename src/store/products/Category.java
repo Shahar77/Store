@@ -5,7 +5,7 @@
 package store.products;
 
 /**
- * Product categories.
+ * Enumeration of product categories in the store.
  */
 public enum Category{
     BOOKS,
