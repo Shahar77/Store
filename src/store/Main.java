@@ -2,71 +2,65 @@
 // id : 329185771
 // name : Shahar Ezra
 // id : 329186118
-package store;
-
 import store.engine.StoreEngine;
-import store.products.*;
 import store.gui.StoreWindow;
-
-import javax.swing.*;
+import store.products.*;
 import java.awt.Color;
 
 /**
- * Entry point of the store application.
- * Responsible for initializing demo data and launching the GUI.
+ * Application entry point.
  */
-public class Main {
+public class Main{
 
     /**
      * Starts the store application.
-     * Creates the StoreEngine, loads initial demo products
-     * and opens the main StoreWindow.
      *
-     * @param args command-line arguments (not used)
+     * @param args program arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args){
+        StoreEngine engine=new StoreEngine();
 
-        StoreEngine engine = new StoreEngine();
-
-        // Demo products (you can replace with loading from file if needed)
-        engine.addProduct(new BookProduct(
+        engine.addProduct(
+            new BookProduct(
                 "Java Basics",
-                120.0,
+                120,
                 10,
                 "Intro to Java programming",
                 Category.BOOKS,
-                Color.BLUE,
+                Color.WHITE,
                 "images/java.png",
                 "John Doe",
                 350
-        ));
+            )
+        );
 
-        engine.addProduct(new ClothingProduct(
-                "Pink Hoodie",
-                180.0,
-                6,
-                "Warm oversized hoodie",
+        engine.addProduct(
+            new ClothingProduct(
+                "T-Shirt",
+                80,
+                15,
+                "Cotton shirt",
                 Category.CLOTHING,
-                Color.PINK,
-                "images/hoodie.png",
-                "M"
-        ));
-
-        engine.addProduct(new ElectronicsProduct(
-                "Wireless Headphones",
-                299.0,
-                4,
-                "Noise cancelling headphones",
-                Category.ELECTRONICS,
                 Color.BLACK,
-                "images/headphones.png",
-                24,
-                "Sony"
-        ));
+                "images/shirt.png",
+                "M"
+            )
+        );
 
-        SwingUtilities.invokeLater(() -> {
-            StoreWindow window = new StoreWindow(engine);
-            window.setVisible(true);
-        });
+        engine.addProduct(
+            new ElectronicsProduct(
+                "Laptop",
+                3500,
+                5,
+                "Powerful laptop",
+                Category.ELECTRONICS,
+                Color.GRAY,
+                "images/laptop.png",
+                24,
+                "Lenovo"
+            )
+        );
+
+        new StoreWindow(engine).setVisible(true);
     }
 }
