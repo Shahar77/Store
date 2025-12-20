@@ -10,8 +10,10 @@ import java.awt.Color;
 
 /**
  * Abstract base class for all products in the store.
+ * Contains common fields such as name,price,stock and category.
  */
 public abstract class Product implements PricedItem,StockManageable,Persistable,StoreEntity{
+
     private String name;
     private double price;
     private int stock;
@@ -22,6 +24,13 @@ public abstract class Product implements PricedItem,StockManageable,Persistable,
 
     /**
      * Creates a new product.
+     * @param name product name
+     * @param price product price
+     * @param stock initial stock
+     * @param description product description
+     * @param category product category
+     * @param color display color
+     * @param imagePath path to product image
      */
     public Product(String name,double price,int stock,String description,Category category,Color color,String imagePath){
         this.name=name;
@@ -34,113 +43,149 @@ public abstract class Product implements PricedItem,StockManageable,Persistable,
     }
 
     /**
-     * Returns product name.
+     * @return product name
      */
     public String getName(){
         return name;
     }
 
     /**
-     * Returns product description.
+     * @return product description
      */
     public String getDescription(){
         return description;
     }
 
     /**
-     * Returns product category.
+     * @return product category
      */
     public Category getCategory(){
         return category;
     }
 
     /**
-     * Returns product color.
+     * @return product color
      */
     public Color getColor(){
         return color;
     }
 
     /**
-     * Returns image path.
+     * @return product image path
      */
     public String getImagePath(){
         return imagePath;
     }
 
     /**
-     * Returns product price.
+     * @return product price
      */
+    @Override
     public double getPrice(){
         return price;
     }
 
     /**
-     * Updates product price.
+     * Sets a new price if valid.
+     * @param price new price
+     * @return true if updated successfully
      */
+    @Override
     public boolean setPrice(double price){
-        if(price<0)return false;
-        this.price=price;
-        return true;
+        if(price>=0){
+            this.price=price;
+            return true;
+        }
+        return false;
     }
 
     /**
-     * Returns current stock.
+     * @return current stock amount
      */
+    @Override
     public int getStock(){
         return stock;
     }
 
     /**
-     * Increases stock.
+     * Increases product stock.
+     * @param amount amount to add
+     * @return true if valid
      */
+    @Override
     public boolean increaseStock(int amount){
-        if(amount<0)return false;
-        stock+=amount;
-        return true;
+        if(amount>=0){
+            stock+=amount;
+            return true;
+        }
+        return false;
     }
 
     /**
-     * Decreases stock.
+     * Decreases product stock.
+     * @param amount amount to remove
+     * @return true if valid
      */
+    @Override
     public boolean decreaseStock(int amount){
-        if(amount<0||amount>stock)return false;
-        stock-=amount;
-        return true;
+        if(amount>=0&&stock>=amount){
+            stock-=amount;
+            return true;
+        }
+        return false;
     }
 
     /**
-     * Returns display name for UI.
+     * @return display name for GUI
      */
+    @Override
     public String getDisplayName(){
         return name;
     }
 
     /**
-     * Returns detailed display string.
+     * @return detailed display information
      */
+    @Override
     public String getDisplayDetails(){
         return "Price: "+price+
                "\nStock: "+stock+
-               "\nCategory: "+category+
-               "\nDescription: "+description;
+               "\nDescription: "+description+
+               "\nCategory: "+category;
     }
 
     /**
-     * Saves product to file.
+     * Saves the product to a file.
+     * Not implemented in this stage.
+     * @param path file path
      */
+    @Override
     public void saveToFile(String path){
     }
 
+    /**
+     * Products are equal if name and category match.
+     * @param o other object
+     * @return true if equal
+     */
     @Override
     public boolean equals(Object o){
-        if(!(o instanceof Product))return false;
+        if(!(o instanceof Product)){
+            return false;
+        }
         Product p=(Product)o;
         return name.equals(p.name)&&category==p.category;
     }
 
+    /**
+     * @return textual representation of product
+     */
     @Override
     public String toString(){
-        return getDisplayDetails();
+        return "Name: "+name+
+               "\nPrice: "+price+
+               "\nStock: "+stock+
+               "\nDescription: "+description+
+               "\nCategory: "+category;
     }
 }
