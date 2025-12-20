@@ -6,14 +6,11 @@ package store.core;
 
 /**
  * Interface for objects that can be saved to a file.
- * Implementing classes define how their data is persisted.
  */
-public interface Persistable {
-
+public interface Persistable{
     /**
-     * Saves the object to a file at the given path.
-     *
-     * @param path destination file path
+     * Saves the object to a given file path.
+     * @param path destination path
      */
     void saveToFile(String path);
 }
