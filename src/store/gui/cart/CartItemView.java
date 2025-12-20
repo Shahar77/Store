@@ -5,49 +5,120 @@
 package store.gui.cart;
 
 import store.cart.CartItem;
+import store.gui.cart.controller.CartController;
 
 import javax.swing.*;
 import java.awt.*;
 
 /**
- * Visual component representing a single cart item inside the cart panel.
- * Displays product name, quantity and total price.
+ * UI component that displays one cart item with quantity controls.
  */
-public class CartItemView extends JPanel {
-
-    private CartItem item;
-    private JLabel quantityLabel;
-    private JLabel priceLabel;
+public class CartItemView extends JPanel{
+    private final CartItem item;
+    private final CartPanel parent;
+    private final CartController controller;
+    private final JLabel quantityLabel;
+    private final JLabel priceLabel;
 
     /**
-     * Creates a new CartItemView for the given cart item.
-     *
-     * @param item cart item to display
+     * Creates item view.
+     * @param item cart item
+     * @param parent parent panel
+     * @param controller cart controller
      */
-    public CartItemView(CartItem item) {
-        this.item = item;
+    public CartItemView(CartItem item,CartPanel parent,CartController controller){
+        this.item=item;
+        this.parent=parent;
+        this.controller=controller;
 
         setLayout(new BorderLayout());
-        setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        setBorder(BorderFactory.createLineBorder(Color.GRAY,1));
+        setMaximumSize(new Dimension(Integer.MAX_VALUE,110));
 
-        JLabel nameLabel = new JLabel(item.getProduct().getName());
+        JLabel nameLabel=new JLabel(item.getProduct().getName());
+        quantityLabel=new JLabel("Qty: "+item.getQuantity());
+        priceLabel=new JLabel("Price: "+calcPrice()+" ₪");
 
-        quantityLabel = new JLabel("Qty: " + item.getQuantity());
-        priceLabel = new JLabel("Price: ₪" + item.getTotalPrice());
+        JLabel imageLabel=createImageLabel(item.getProduct().getImagePath());
 
-        JPanel infoPanel = new JPanel(new GridLayout(2, 1));
-        infoPanel.add(quantityLabel);
-        infoPanel.add(priceLabel);
+        JButton plusBtn=new JButton("+");
+        JButton minusBtn=new JButton("-");
+        JButton removeBtn=new JButton("Remove");
 
-        add(nameLabel, BorderLayout.WEST);
-        add(infoPanel, BorderLayout.EAST);
+        plusBtn.addActionListener(e->increase());
+        minusBtn.addActionListener(e->decrease());
+        removeBtn.addActionListener(e->removeItem());
+
+        JPanel qtyPanel=new JPanel();
+        qtyPanel.add(minusBtn);
+        qtyPanel.add(quantityLabel);
+        qtyPanel.add(plusBtn);
+
+        JPanel leftPanel=new JPanel(new GridLayout(3,1));
+        leftPanel.add(nameLabel);
+        leftPanel.add(qtyPanel);
+        leftPanel.add(priceLabel);
+
+        JPanel centerPanel=new JPanel(new BorderLayout());
+        centerPanel.add(imageLabel,BorderLayout.WEST);
+        centerPanel.add(leftPanel,BorderLayout.CENTER);
+
+        add(centerPanel,BorderLayout.CENTER);
+        add(removeBtn,BorderLayout.EAST);
     }
 
     /**
-     * Refreshes the displayed quantity and price.
+     * Calculates price for display.
+     * @return price
      */
-    public void refresh() {
-        quantityLabel.setText("Qty: " + item.getQuantity());
-        priceLabel.setText("Price: ₪" + item.getTotalPrice());
+    private double calcPrice(){
+        return item.getProduct().getPrice()*item.getQuantity();
+    }
+
+    /**
+     * Increases quantity by controller.
+     */
+    private void increase(){
+        controller.increase(item.getProduct());
+        parent.refreshAfterChange();
+    }
+
+    /**
+     * Decreases quantity by controller.
+     */
+    private void decrease(){
+        controller.decrease(item.getProduct());
+        parent.refreshAfterChange();
+    }
+
+    /**
+     * Removes item by controller.
+     */
+    private void removeItem(){
+        controller.remove(item.getProduct());
+        parent.refreshAfterChange();
+    }
+
+    /**
+     * Creates an image label from path with fallback.
+     * @param path path
+     * @return label
+     */
+    private JLabel createImageLabel(String path){
+        ImageIcon icon=null;
+        if(path!=null&&!path.isEmpty())icon=new ImageIcon(path);
+
+        JLabel label=new JLabel();
+        label.setPreferredSize(new Dimension(80,80));
+
+        if(icon==null||icon.getIconWidth()<=0){
+            label.setText("No Image");
+            label.setHorizontalAlignment(SwingConstants.CENTER);
+            return label;
+        }
+
+        Image scaled=icon.getImage().getScaledInstance(70,70,Image.SCALE_SMOOTH);
+        label.setIcon(new ImageIcon(scaled));
+        return label;
     }
 }
