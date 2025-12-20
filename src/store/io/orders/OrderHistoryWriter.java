@@ -5,23 +5,31 @@
 package store.io.orders;
 
 import store.orders.Order;
-
 import java.io.FileWriter;
 import java.io.IOException;
 
 /**
- * Writes order history entries to a CSV file.
+ * Responsible for writing order history to a file.
  */
 public class OrderHistoryWriter{
+
     /**
-     * Appends an order to file.
-     * @param order order
+     * Appends a single order to a CSV file.
+     * Format:
+     * orderId,totalAmount,date,itemsCount
+     *
+     * @param order order to save
      * @param path file path
-     * @throws IOException if file write fails
+     * @throws IOException if writing fails
      */
-    public static void write(Order order,String path) throws IOException{
+    public static void write(Order order,String path)throws IOException{
         FileWriter writer=new FileWriter(path,true);
-        writer.write(order.getOrderID()+","+order.getTotalAmount()+","+order.getCreatedAt()+","+order.getItems().size()+"\n");
+        writer.write(
+            order.getOrderID()+","+
+            order.getTotalAmount()+","+
+            order.getCreatedAt()+","+
+            order.getItems().size()+"\n"
+        );
         writer.close();
     }
 }
