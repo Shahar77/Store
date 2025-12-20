@@ -4,39 +4,40 @@
 // id : 329186118
 package store.gui.catalog;
 
+import store.gui.catalog.controller.CatalogController;
 import store.products.Product;
 
 import javax.swing.*;
 import java.awt.*;
 
 /**
- * Dialog window that displays detailed information about a product.
+ * Dialog that shows product details and allows adding to cart.
  */
-public class ProductDetailsDialog extends JDialog {
-
+public class ProductDetailsDialog extends JDialog{
     /**
-     * Creates and shows a dialog with product details.
-     *
-     * @param product product to display
+     * Creates and shows the dialog.
+     * @param product product
+     * @param controller controller
      */
-    public ProductDetailsDialog(Product product) {
-        setTitle(product.getDisplayName());
+    public ProductDetailsDialog(Product product,CatalogController controller){
+        setTitle(product.getName());
         setModal(true);
-        setSize(350, 300);
-        setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        JTextArea detailsArea = new JTextArea(product.getDisplayDetails());
-        detailsArea.setEditable(false);
-        detailsArea.setLineWrap(true);
-        detailsArea.setWrapStyleWord(true);
+        add(new ProductDetailsPanel(product),BorderLayout.CENTER);
 
-        add(new JScrollPane(detailsArea), BorderLayout.CENTER);
+        JButton addButton=new JButton("Add To Cart");
+        addButton.addActionListener(e->{
+            boolean ok=controller.addToCart(product,1);
+            if(ok)JOptionPane.showMessageDialog(this,"Added to cart");
+            else JOptionPane.showMessageDialog(this,"Cannot add to cart","Error",JOptionPane.ERROR_MESSAGE);
+            dispose();
+        });
 
-        JButton closeButton = new JButton("Close");
-        closeButton.addActionListener(e -> dispose());
-        add(closeButton, BorderLayout.SOUTH);
+        add(addButton,BorderLayout.SOUTH);
 
+        pack();
+        setLocationRelativeTo(null);
         setVisible(true);
     }
 }
