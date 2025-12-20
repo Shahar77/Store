@@ -11,52 +11,47 @@ import java.util.List;
 
 /**
  * Represents a shopping cart for a customer.
- * The cart holds a list of CartItem objects and allows item management.
  */
-public class Cart {
-
+public class Cart{
     private List<CartItem> items;
 
     /**
-     * Creates an empty shopping cart.
+     * Creates an empty cart.
      */
-    public Cart() {
-        this.items = new ArrayList<>();
+    public Cart(){
+        items=new ArrayList<>();
     }
 
     /**
-     * Adds a product to the cart with the given quantity.
-     * If the product already exists in the cart, its quantity is increased.
-     *
-     * @param p product to add
-     * @param quantity quantity to add
-     * @return true if the item was added or updated successfully
+     * Adds a product with quantity.
+     * If product already exists, increases its quantity.
+     * @param p product
+     * @param quantity quantity
+     * @return true if added
      */
-    public boolean addItem(Product p, int quantity) {
-        if (p == null || quantity <= 0) return false;
-
-        for (CartItem ci : items) {
-            if (ci.getProduct().equals(p)) {
-                ci.setQuantity(ci.getQuantity() + quantity);
+    public boolean addItem(Product p,int quantity){
+        if(quantity<=0||p==null)return false;
+        for(int i=0;i<items.size();i++){
+            CartItem ci=items.get(i);
+            if(ci.getProduct().equals(p)){
+                ci.setQuantity(ci.getQuantity()+quantity);
                 return true;
             }
         }
-
-        items.add(new CartItem(p, quantity));
+        items.add(new CartItem(p,quantity));
         return true;
     }
 
     /**
      * Removes a product from the cart.
-     *
-     * @param p product to remove
-     * @return true if the product was found and removed
+     * @param p product
+     * @return true if removed
      */
-    public boolean removeItem(Product p) {
-        if (p == null) return false;
-
-        for (int i = 0; i < items.size(); i++) {
-            if (items.get(i).getProduct().equals(p)) {
+    public boolean removeItem(Product p){
+        if(p==null)return false;
+        for(int i=0;i<items.size();i++){
+            CartItem ci=items.get(i);
+            if(ci.getProduct().equals(p)){
                 items.remove(i);
                 return true;
             }
@@ -65,21 +60,19 @@ public class Cart {
     }
 
     /**
-     * Decreases the quantity of a product in the cart by one.
-     * If the quantity becomes zero, the item is removed.
-     *
-     * @param p product to decrease
-     * @return true if the cart was updated
+     * Decreases quantity of a product in the cart by 1.
+     * If quantity becomes 0, removes the item.
+     * @param p product
+     * @return true if changed
      */
-    public boolean decreaseItem(Product p) {
-        if (p == null) return false;
-
-        for (int i = 0; i < items.size(); i++) {
-            CartItem ci = items.get(i);
-            if (ci.getProduct().equals(p)) {
-                if (ci.getQuantity() > 1) {
-                    ci.setQuantity(ci.getQuantity() - 1);
-                } else {
+    public boolean decreaseItem(Product p){
+        if(p==null)return false;
+        for(int i=0;i<items.size();i++){
+            CartItem ci=items.get(i);
+            if(ci.getProduct().equals(p)){
+                if(ci.getQuantity()>1){
+                    ci.setQuantity(ci.getQuantity()-1);
+                }else{
                     items.remove(i);
                 }
                 return true;
@@ -89,24 +82,31 @@ public class Cart {
     }
 
     /**
-     * Calculates the total price of all items in the cart.
-     *
-     * @return total cost
+     * Calculates total price of all items.
+     * @return total
      */
-    public double calculateTotal() {
-        double total = 0;
-        for (CartItem ci : items) {
-            total += ci.getTotalPrice();
+    public double calculateTotal(){
+        double total=0;
+        for(int i=0;i<items.size();i++){
+            total+=items.get(i).getTotalPrice();
         }
         return total;
     }
 
     /**
-     * Removes all items from the cart.
+     * Clears the cart.
      */
-    public void clear() {
+    public void clear(){
         items.clear();
     }
+
+    /**
+     * @return list of items
+     */
+    public List<CartItem> getItems(){
+        return items;
+    }
+}
 
     /**
      * Returns the list of cart items.
