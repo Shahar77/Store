@@ -1,3 +1,4 @@
+package store;
 // name : Sarah Gabay
 // id : 329185771
 // name : Shahar Ezra
@@ -21,44 +22,44 @@ public class Main{
         StoreEngine engine=new StoreEngine();
 
         engine.addProduct(
-            new BookProduct(
-                "Java Basics",
-                120,
-                10,
-                "Intro to Java programming",
-                Category.BOOKS,
-                Color.WHITE,
-                "images/java.png",
-                "John Doe",
-                350
-            )
+                new BookProduct(
+                        "Java Basics",
+                        120,
+                        10,
+                        "Intro to Java programming",
+                        Category.BOOKS,
+                        Color.WHITE,
+                        "images/java.png",
+                        "John Doe",
+                        350
+                )
         );
 
         engine.addProduct(
-            new ClothingProduct(
-                "T-Shirt",
-                80,
-                15,
-                "Cotton shirt",
-                Category.CLOTHING,
-                Color.BLACK,
-                "images/shirt.png",
-                "M"
-            )
+                new ClothingProduct(
+                        "T-Shirt",
+                        80,
+                        15,
+                        "Cotton shirt",
+                        Category.CLOTHING,
+                        Color.BLACK,
+                        "images/shirt.png",
+                        "M"
+                )
         );
 
         engine.addProduct(
-            new ElectronicsProduct(
-                "Laptop",
-                3500,
-                5,
-                "Powerful laptop",
-                Category.ELECTRONICS,
-                Color.GRAY,
-                "images/laptop.png",
-                24,
-                "Lenovo"
-            )
+                new ElectronicsProduct(
+                        "Laptop",
+                        3500,
+                        5,
+                        "Powerful laptop",
+                        Category.ELECTRONICS,
+                        Color.GRAY,
+                        "images/laptop.png",
+                        24,
+                        "Lenovo"
+                )
         );
 
         new StoreWindow(engine).setVisible(true);
