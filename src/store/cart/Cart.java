@@ -116,4 +116,32 @@ public class Cart {
     public List<CartItem> getItems() {
         return items;
     }
+    /**
+     * Checks if a product exists in the cart.
+     *
+     * @param p product to check
+     * @return true if found in cart
+     */
+    public boolean contains(Product p) {
+        if (p == null) return false;
+        for (CartItem ci : items) {
+            if (ci.getProduct().equals(p)) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Returns the quantity of a product in the cart.
+     *
+     * @param p product to check
+     * @return quantity in cart, 0 if not found
+     */
+    public int getQuantity(Product p) {
+        if (p == null) return 0;
+        for (CartItem ci : items) {
+            if (ci.getProduct().equals(p)) return ci.getQuantity();
+        }
+        return 0;
+    }
+
 }

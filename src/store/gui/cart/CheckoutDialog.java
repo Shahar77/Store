@@ -45,6 +45,8 @@ public class CheckoutDialog extends JDialog {
 
         pack();
         setLocationRelativeTo(parent);
+        setVisible(true);
+
     }
 
     /**
@@ -52,6 +54,7 @@ public class CheckoutDialog extends JDialog {
      * Creates an order from the cart and clears it.
      */
     private void confirmCheckout() {
+        System.out.println("Checkout clicked, items: " + cart.getItems().size());
 
         if (cart.getItems().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Cart is empty");
@@ -76,6 +79,14 @@ public class CheckoutDialog extends JDialog {
         );
 
         dispose();
+        if (cart.getItems().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Cart is empty");
+            return;
+        }
+        cart.clear();
+
+
     }
+
 
 }

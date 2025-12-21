@@ -88,8 +88,29 @@ public class StoreEngine {
         cart.clear();
         return order;
     }
+
     public OrderManager getOrderManager() {
         return orderManager;
+    }
+    /**
+     * Returns a copy of all products in the store (including out of stock).
+     *
+     * @return list of all products
+     */
+    public List<Product> getAllProducts() {
+        return new ArrayList<>(products);
+    }
+
+    /**
+     * Clears current products and replaces them with the given list.
+     *
+     * @param newProducts products to set
+     */
+    public void setProducts(List<Product> newProducts) {
+        products.clear();
+        if (newProducts != null) {
+            products.addAll(newProducts);
+        }
     }
 
 }

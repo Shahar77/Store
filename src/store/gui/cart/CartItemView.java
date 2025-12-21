@@ -31,6 +31,10 @@ public class CartItemView extends JPanel {
 
         setLayout(new BorderLayout(5, 5));
         setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        setOpaque(true);
+        setBackground(new Color(235, 255, 240));
+        setBorder(BorderFactory.createLineBorder(new Color(40, 160, 90), 2));
+
 
         JLabel nameLabel = new JLabel(item.getProduct().getName());
 

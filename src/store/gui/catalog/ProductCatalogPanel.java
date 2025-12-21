@@ -1,7 +1,3 @@
-// name : Sarah Gabay
-// id : 329185771
-// name : Shahar Ezra
-// id : 329186118
 package store.gui.catalog;
 
 import store.products.Product;
@@ -18,10 +14,15 @@ import java.util.List;
  */
 public class ProductCatalogPanel extends JPanel {
 
-    private CatalogController controller;
+    private final CatalogController controller;
     private JPanel gridPanel;
     private JTextField searchField;
     private JComboBox<Category> categoryBox;
+
+    private JLabel toastLabel;
+    private Timer toastTimer;
+
+    private ProductCard selectedCard;
 
     /**
      * Creates a new ProductCatalogPanel.
@@ -35,13 +36,11 @@ public class ProductCatalogPanel extends JPanel {
 
         initTopPanel();
         initGridPanel();
+        initToast();
 
         updateGrid(products);
     }
 
-    /**
-     * Initializes the top panel with search and category filter.
-     */
     private void initTopPanel() {
         JPanel topPanel = new JPanel(new FlowLayout());
 
@@ -63,17 +62,18 @@ public class ProductCatalogPanel extends JPanel {
         add(topPanel, BorderLayout.NORTH);
     }
 
-    /**
-     * Initializes the grid panel used to show products.
-     */
     private void initGridPanel() {
         gridPanel = new JPanel(new GridLayout(0, 3, 10, 10));
         add(new JScrollPane(gridPanel), BorderLayout.CENTER);
     }
 
-    /**
-     * Applies search and category filters.
-     */
+    private void initToast() {
+        toastLabel = new JLabel(" ");
+        toastLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        toastLabel.setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
+        add(toastLabel, BorderLayout.SOUTH);
+    }
+
     private void applyFilters() {
         String text = searchField.getText();
         Category category = (Category) categoryBox.getSelectedItem();
@@ -82,16 +82,53 @@ public class ProductCatalogPanel extends JPanel {
     }
 
     /**
-     * Updates the grid with the given product list.
-     *
-     * @param products products to display
+     * Refreshes catalog using current search/filter values.
      */
+    public void refreshFromEngine() {
+        applyFilters();
+    }
+
+    /**
+     * Shows a small message that disappears after 1 second.
+     *
+     * @param msg message text
+     */
+    public void showToast(String msg) {
+        toastLabel.setText(msg);
+
+        if (toastTimer != null && toastTimer.isRunning()) {
+            toastTimer.stop();
+        }
+
+        toastTimer = new Timer(1000, e -> toastLabel.setText(" "));
+        toastTimer.setRepeats(false);
+        toastTimer.start();
+    }
+
     private void updateGrid(List<Product> products) {
         gridPanel.removeAll();
+        selectedCard = null;
+
         for (Product p : products) {
-            gridPanel.add(new ProductCard(p, controller));
+            ProductCard card = new ProductCard(p, controller, this::selectCard);
+
+            boolean inCart = controller.isInCart(p);
+            card.setInCart(inCart);
+
+            gridPanel.add(card);
         }
+
         gridPanel.revalidate();
         gridPanel.repaint();
+    }
+
+    private void selectCard(ProductCard card) {
+        if (selectedCard != null) {
+            selectedCard.setSelected(false);
+        }
+        selectedCard = card;
+        if (selectedCard != null) {
+            selectedCard.setSelected(true);
+        }
     }
 }

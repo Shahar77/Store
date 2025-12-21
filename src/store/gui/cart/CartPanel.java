@@ -79,8 +79,10 @@ public class CartPanel extends JPanel {
         add(bottom, BorderLayout.SOUTH);
         checkoutButton.addActionListener(e -> {
             JFrame parent = (JFrame) SwingUtilities.getWindowAncestor(this);
-            new CheckoutDialog(parent, cart, engine);
+            CheckoutDialog dialog = new CheckoutDialog(parent, cart, engine);
+            dialog.setVisible(true);
         });
+
 
     }
 

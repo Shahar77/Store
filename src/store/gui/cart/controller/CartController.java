@@ -49,22 +49,30 @@ public class CartController {
     public void decrease(Product p) {
         if (p != null) {
             cart.decreaseItem(p);
+            if (cartPanel != null) {
+                cartPanel.refresh();
+            }
         }
     }
+    /**
+            * Removes a product completely from the cart.
+     *
+             * @param p product to remove
+     */
+
+    public void remove(Product p) {
+        if (p != null) {
+            cart.removeItem(p);
+            if (cartPanel != null) {
+                cartPanel.refresh();
+            }
+        }
+    }
+
     public void setCartPanel(CartPanel cartPanel) {
         this.cartPanel = cartPanel;
     }
 
-    /**
-     * Removes a product completely from the cart.
-     *
-     * @param p product to remove
-     */
-    public void remove(Product p) {
-        if (p != null) {
-            cart.removeItem(p);
-        }
-    }
 
     /**
      * Returns the controlled shopping cart.
