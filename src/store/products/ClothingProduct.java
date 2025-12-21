@@ -7,42 +7,41 @@ package store.products;
 import java.awt.Color;
 
 /**
- * Represents a clothing product.
- * Includes clothing size information.
+ * Represents a clothing product sold in the store.
+ * Extends Product with clothing size information.
  */
-public class ClothingProduct extends Product{
+public class ClothingProduct extends Product {
 
     private String size;
 
     /**
-     * Creates a new clothing product.
+     * Creates a new ClothingProduct.
+     *
      * @param name product name
      * @param price product price
      * @param stock amount in stock
      * @param description product description
+     * @param category product category, must be CLOTHING
      * @param color display color
-     * @param imagePath path to image
+     * @param imagePath path to product image
      * @param size clothing size
      */
-    public ClothingProduct(String name,double price,int stock,String description,Color color,String imagePath,String size){
-        super(name,price,stock,description,Category.CLOTHING,color,imagePath);
-        this.size=size;
+    public ClothingProduct(String name, double price, int stock,
+                           String description, Category category,
+                           Color color, String imagePath,
+                           String size) {
+        super(name, price, stock, description, Category.CLOTHING, color, imagePath);
+        this.size = size;
     }
 
     /**
-     * @return clothing size
-     */
-    public String getSize(){
-        return size;
-    }
-
-    /**
-     * @return detailed clothing description
+     * Returns a detailed textual representation of the clothing product.
+     *
+     * @return clothing product details
      */
     @Override
-    public String toString(){
-        return super.toString()+
-               "\nSize: "+size;
+    public String toString() {
+        return super.toString()
+                + "\nSize: " + size;
     }
 }
-
