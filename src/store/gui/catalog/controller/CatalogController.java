@@ -8,69 +8,40 @@ import store.engine.StoreEngine;
 import store.products.Product;
 import store.products.Category;
 import store.gui.catalog.ProductCatalogPanel;
+import store.gui.cart.controller.CartController;
 
-import javax.swing.JPanel;
+import javax.swing.*;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.stream.Collectors;
+
 
 /**
  * Controller for the product catalog screen.
  * Handles filtering and cart interactions.
  */
-public class CatalogController{
+public class CatalogController {
 
-    private StoreEngine engine;
+    private final StoreEngine engine;
+    private final CartController cartController;
 
-    /**
-     * Creates a catalog controller.
-     * @param engine store engine instance
-     */
-    public CatalogController(StoreEngine engine){
-        this.engine=engine;
+    public CatalogController(StoreEngine engine, CartController cartController) {
+        this.engine = engine;
+        this.cartController = cartController;
     }
 
-    /**
-     * Creates the catalog panel for the GUI.
-     * @return catalog panel
-     */
-    public JPanel createCatalogPanel(){
-        return new ProductCatalogPanel(engine.getAvailableProducts(),this);
+    public JPanel createCatalogPanel() {
+        return new ProductCatalogPanel(engine.getAvailableProducts(), this);
     }
 
-    /**
-     * Filters products by text and category.
-     * @param text search text
-     * @param category selected category or null
-     * @return filtered list of products
-     */
-    public List<Product> filter(String text,Category category){
-        List<Product> result=new ArrayList<>();
-        List<Product> products=engine.getAvailableProducts();
-
-        for(int i=0;i<products.size();i++){
-            Product p=products.get(i);
-
-            if(text!=null&&!text.isEmpty()){
-                if(!p.getName().toLowerCase().contains(text.toLowerCase())){
-                    continue;
-                }
-            }
-
-            if(category!=null&&p.getCategory()!=category){
-                continue;
-            }
-
-            result.add(p);
-        }
-        return result;
+    public List<Product> filter(String text, Category category) {
+        return engine.getAvailableProducts().stream()
+                .filter(p -> text == null || text.isEmpty()
+                        || p.getName().toLowerCase().contains(text.toLowerCase()))
+                .filter(p -> category == null || p.getCategory() == category)
+                .collect(Collectors.toList());
     }
 
-    /**
-     * Adds a product to the cart.
-     * @param p product to add
-     * @return true if added successfully
-     */
-    public boolean addToCart(Product p){
-        return engine.addToCart(p);
+    public void addToCart(Product product) {
+        cartController.increase(product);
     }
 }
