@@ -1,7 +1,11 @@
-// name : Sarah Gabay
-// id : 329185771
-// name : Shahar Ezra
-// id : 329186118
+```java
+/**
+ * Submitted by:
+ * Sarah Gabay - ID 329185771
+ * Shahar Ezra - ID 329186118
+ */
+```
+
 package store.gui.cart.controller;
 
 import store.cart.Cart;
