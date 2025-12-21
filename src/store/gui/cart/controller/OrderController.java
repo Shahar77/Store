@@ -1,3 +1,7 @@
+// name : Sarah Gabay
+// id : 329185771
+// name : Shahar Ezra
+// id : 329186118
 package store.gui.cart.controller;
 
 import store.cart.Cart;
