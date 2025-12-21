@@ -15,10 +15,11 @@ import java.util.ArrayList;
 
 /**
  * Controller for the product catalog screen.
- * Handles filtering and cart interactions.
+ * Responsible for creating the catalog panel,
+ * filtering products by text/category,
+ * and adding products to cart via StoreEngine.
  */
 public class CatalogController{
-
     private StoreEngine engine;
 
     /**
@@ -39,21 +40,23 @@ public class CatalogController{
 
     /**
      * Filters products by text and category.
+     * If category is null => no category filtering.
+     * If text is null/empty => no text filtering.
      * @param text search text
-     * @param category selected category or null
+     * @param category selected category or null for all
      * @return filtered list of products
      */
     public List<Product> filter(String text,Category category){
         List<Product> result=new ArrayList<>();
         List<Product> products=engine.getAvailableProducts();
 
+        String t=(text==null)?"":text.trim().toLowerCase();
+
         for(int i=0;i<products.size();i++){
             Product p=products.get(i);
 
-            if(text!=null&&!text.isEmpty()){
-                if(!p.getName().toLowerCase().contains(text.toLowerCase())){
-                    continue;
-                }
+            if(!t.isEmpty()&&!p.getName().toLowerCase().contains(t)){
+                continue;
             }
 
             if(category!=null&&p.getCategory()!=category){
@@ -65,12 +68,15 @@ public class CatalogController{
         return result;
     }
 
+
+
     /**
-     * Adds a product to the cart.
-     * @param p product to add
-     * @return true if added successfully
+     * Adds product to cart and updates cart UI.
+     * @param p product
      */
-    public boolean addToCart(Product p){
-        return engine.addToCart(p);
+    public void addToCart(Product p){
+        engine.addToCart(p);
     }
+
+
 }

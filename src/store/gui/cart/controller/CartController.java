@@ -1,12 +1,14 @@
 package store.gui.cart.controller;
 
 import store.engine.StoreEngine;
-import store.cart.Cart;
+import store.cart.CartItem;
 import store.products.Product;
 
+import java.util.List;
+
 /**
- * Controller for cart-related actions.
- * Acts as a mediator between the cart GUI and the store engine.
+ * Controller for cart operations.
+ * Acts as a bridge between cart GUI and StoreEngine.
  */
 public class CartController{
 
@@ -21,26 +23,32 @@ public class CartController{
     }
 
     /**
-     * Adds one unit of a product to the cart.
-     * @param p product to add
+     * @return all items currently in the cart
      */
-    public void add(Product p){
-        engine.addToCart(p);
+    public List<CartItem> getItems(){
+        return engine.getCart().getItems();
     }
 
     /**
-     * Removes a product completely from the cart.
-     * @param p product to remove
+     * Adds one unit of product to cart.
+     * @param product product to add
      */
-    public void remove(Product p){
-        engine.getCart().removeItem(p);
+    public void add(Product product){
+        engine.addToCart(product);
     }
 
     /**
-     * Returns the current cart.
-     * @return cart instance
+     * Decreases quantity of a product in cart.
+     * @param item cart item
      */
-    public Cart getCart(){
-        return engine.getCart();
+    public void decrease(CartItem item){
+        engine.getCart().decreaseItem(item.getProduct());
+    }
+
+    /**
+     * @return total cart price
+     */
+    public double getTotal(){
+        return engine.getCart().calculateTotal();
     }
 }

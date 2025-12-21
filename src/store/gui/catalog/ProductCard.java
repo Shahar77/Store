@@ -13,29 +13,36 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 /**
- * Small UI card that represents a product inside the catalog grid.
+ * UI component that represents a single product in the catalog grid.
+ * Displays product image, name and price and opens product details on click.
  */
 public class ProductCard extends JPanel{
+
     private final Product product;
     private final CatalogController controller;
 
     /**
-     * Creates a product card.
-     * @param product product
-     * @param controller controller
+     * Creates a product card for the catalog grid.
+     * @param product product to display
+     * @param controller catalog controller
      */
     public ProductCard(Product product,CatalogController controller){
         this.product=product;
         this.controller=controller;
 
         setLayout(new BorderLayout());
-        setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY,1));
+        setPreferredSize(new Dimension(180,260));
+        setMinimumSize(new Dimension(180,260));
         setBackground(Color.WHITE);
+        setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY,1));
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         setToolTipText(product.getDisplayDetails());
 
         JLabel imageLabel=createImageLabel(product.getImagePath());
+
         JLabel nameLabel=new JLabel(product.getName(),SwingConstants.CENTER);
+        nameLabel.setFont(nameLabel.getFont().deriveFont(Font.BOLD));
+
         JLabel priceLabel=new JLabel("₪"+product.getPrice(),SwingConstants.CENTER);
 
         JPanel infoPanel=new JPanel(new GridLayout(2,1));
@@ -49,7 +56,7 @@ public class ProductCard extends JPanel{
         MouseAdapter clickListener=new MouseAdapter(){
             @Override
             public void mouseClicked(MouseEvent e){
-                new ProductDetailsDialog(product,controller);
+                openDetailsDialog();
             }
         };
 
@@ -61,27 +68,32 @@ public class ProductCard extends JPanel{
     }
 
     /**
-     * Creates an image label from path, with fallback.
+     * Opens the product details dialog for this product.
+     */
+    private void openDetailsDialog(){
+        new ProductDetailsDialog(product,controller);
+    }
+
+    /**
+     * Creates an image label from a given image path.
+     * If the image does not exist, displays a fallback text.
      * @param path image path
-     * @return label
+     * @return image label
      */
     private JLabel createImageLabel(String path){
         JLabel label=new JLabel("",SwingConstants.CENTER);
-        label.setPreferredSize(new Dimension(150,200));
-        ImageIcon icon=null;
+        label.setPreferredSize(new Dimension(150,180));
 
         if(path!=null&&!path.isEmpty()){
-            icon=new ImageIcon(path);
+            ImageIcon icon=new ImageIcon(path);
+            if(icon.getIconWidth()>0){
+                Image scaled=icon.getImage().getScaledInstance(120,160,Image.SCALE_SMOOTH);
+                label.setIcon(new ImageIcon(scaled));
+                return label;
+            }
         }
 
-        if(icon==null||icon.getIconWidth()<=0){
-            label.setText("No Image");
-            return label;
-        }
-
-        Image scaled=icon.getImage().getScaledInstance(120,160,Image.SCALE_SMOOTH);
-        label.setIcon(new ImageIcon(scaled));
+        label.setText("No Image");
         return label;
     }
 }
-

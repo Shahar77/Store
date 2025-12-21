@@ -23,6 +23,8 @@ public class Main{
 
             StoreEngine engine=new StoreEngine();
 
+            System.out.println(engine.getAvailableProducts().size());
+
             engine.addProduct(new BookProduct(
                     "Clean Code",
                     120.0,

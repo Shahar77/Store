@@ -1,66 +1,68 @@
 package store.gui.cart;
 
-import store.engine.StoreEngine;
 import store.gui.cart.controller.CartController;
+import store.engine.StoreEngine;
 import store.cart.CartItem;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 /**
- * GUI panel that displays the shopping cart.
+ * Main cart panel showing all cart items and checkout.
  */
 public class CartPanel extends JPanel{
 
-    private final StoreEngine engine;
     private final CartController controller;
-    private JPanel itemsPanel;
+    private final JPanel itemsPanel;
+    private final JLabel totalLabel;
 
     /**
-     * Creates a cart panel.
+     * Creates cart panel.
      * @param engine store engine
      */
     public CartPanel(StoreEngine engine){
-        this.engine=engine;
         this.controller=new CartController(engine);
         setLayout(new BorderLayout());
-        initUI();
-    }
 
-    /**
-     * Initializes the cart UI.
-     */
-    private void initUI(){
         itemsPanel=new JPanel();
         itemsPanel.setLayout(new BoxLayout(itemsPanel,BoxLayout.Y_AXIS));
         add(new JScrollPane(itemsPanel),BorderLayout.CENTER);
 
+        totalLabel=new JLabel();
         JButton checkoutButton=new JButton("Checkout");
-        checkoutButton.addActionListener(e->openCheckout());
-        add(checkoutButton,BorderLayout.SOUTH);
 
-        refreshAfterChange();
+        JPanel bottom=new JPanel(new BorderLayout());
+        bottom.add(totalLabel,BorderLayout.WEST);
+        bottom.add(checkoutButton,BorderLayout.EAST);
+
+        add(bottom,BorderLayout.SOUTH);
+
+        refresh();
     }
 
-    /**
-     * Opens the checkout dialog.
-     */
-    private void openCheckout(){
-        JFrame frame=(JFrame)SwingUtilities.getWindowAncestor(this);
-        CheckoutDialog dialog=new CheckoutDialog(frame,engine);
-        dialog.setVisible(true);
-        refreshAfterChange();
-    }
+
 
     /**
-     * Refreshes cart display after changes.
+     * Refreshes the cart view from engine data.
      */
-    private void refreshAfterChange(){
+    public void refresh(){
         itemsPanel.removeAll();
-        for(CartItem item:controller.getCart().getItems()){
-            itemsPanel.add(new CartItemView(item,controller,this::refreshAfterChange));
+        for(CartItem item:engine.getCart().getItems()){
+            itemsPanel.add(new CartItemView(item,controller,this));
         }
+        totalLabel.setText("Total: ₪"+engine.getCart().calculateTotal());
         revalidate();
         repaint();
     }
+
+
+    checkoutButton.addActionListener(e->{
+        new CheckoutDialog(
+                (JFrame)SwingUtilities.getWindowAncestor(this),
+                engine,
+                this
+        ).setVisible(true);
+    });
+
 }

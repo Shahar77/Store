@@ -7,30 +7,38 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * GUI component representing a single cart item.
+ * Visual representation of a single cart item.
  */
 public class CartItemView extends JPanel{
 
     /**
-     * Creates a cart item view.
+     * Creates a cart item row with + / - buttons.
      * @param item cart item
      * @param controller cart controller
-     * @param refreshCallback callback to refresh UI
+     * @param refresh callback to refresh UI
      */
-    public CartItemView(CartItem item,CartController controller,Runnable refreshCallback){
-        setLayout(new BorderLayout());
+    public CartItemView(CartItem item,CartController controller,Runnable refresh){
+        setLayout(new GridLayout(1,5));
+        setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
 
-        JLabel nameLabel=new JLabel(item.getProduct().getName());
-        JLabel quantityLabel=new JLabel("Qty: "+item.getQuantity());
+        add(new JLabel(item.getProduct().getName()));
+        add(new JLabel("₪"+item.getProduct().getPrice()));
+        add(new JLabel("Qty: "+item.getQuantity()));
 
-        JButton removeButton=new JButton("Remove");
-        removeButton.addActionListener(e->{
-            controller.remove(item.getProduct());
-            refreshCallback.run();
+        JButton plus=new JButton("+");
+        JButton minus=new JButton("-");
+
+        plus.addActionListener(e->{
+            controller.add(item.getProduct());
+            refresh.run();
         });
 
-        add(nameLabel,BorderLayout.WEST);
-        add(quantityLabel,BorderLayout.CENTER);
-        add(removeButton,BorderLayout.EAST);
+        minus.addActionListener(e->{
+            controller.decrease(item);
+            refresh.run();
+        });
+
+        add(plus);
+        add(minus);
     }
 }

@@ -2,30 +2,29 @@
 // id : 329185771
 // name : Shahar Ezra
 // id : 329186118
+
 package store.products;
 
 /**
- * Represents an object with manageable stock.
+ * Interface for products that manage stock quantity.
+ * Implementing classes must provide access to current stock
+ * and support decreasing stock after purchase.
  */
 public interface StockManageable{
 
     /**
-     * Returns current stock amount.
-     * @return stock
+     * Returns the current available stock.
+     * @return number of items in stock
      */
     int getStock();
 
     /**
-     * Increases stock.
-     * @param amount amount to add
-     * @return true if valid
-     */
-    boolean increaseStock(int amount);
-
-    /**
-     * Decreases stock.
-     * @param amount amount to remove
-     * @return true if valid
+     * Decreases the stock by the given amount if possible.
+     * The operation should fail if the amount is non-positive
+     * or if there is not enough stock.
+     *
+     * @param amount number of units to decrease
+     * @return true if stock was successfully decreased,false otherwise
      */
     boolean decreaseStock(int amount);
 }
