@@ -10,33 +10,37 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Panel that displays detailed product info.
+ * Panel that displays detailed information about a product.
+ * Can be embedded inside other windows or dialogs.
  */
-public class ProductDetailsPanel extends JPanel{
+public class ProductDetailsPanel extends JPanel {
+
     /**
-     * Creates details panel for a product.
-     * @param product product
+     * Creates a ProductDetailsPanel for the given product.
+     *
+     * @param product product to display
      */
-    public ProductDetailsPanel(Product product){
-        setLayout(new BorderLayout(10,10));
-        setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+    public ProductDetailsPanel(Product product) {
 
-        JLabel nameLabel=new JLabel(product.getName());
-        nameLabel.setFont(new Font("Arial",Font.BOLD,18));
+        setLayout(new BorderLayout(10, 10));
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        JLabel priceLabel=new JLabel("₪"+product.getPrice());
-        priceLabel.setFont(new Font("Arial",Font.PLAIN,16));
+        JLabel nameLabel = new JLabel(product.getDisplayName());
+        nameLabel.setFont(new Font("Arial", Font.BOLD, 18));
 
-        JTextArea detailsArea=new JTextArea(product.getDisplayDetails());
+        JLabel priceLabel = new JLabel("₪" + product.getPrice());
+        priceLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+
+        JTextArea detailsArea = new JTextArea(product.getDisplayDetails());
         detailsArea.setEditable(false);
         detailsArea.setLineWrap(true);
         detailsArea.setWrapStyleWord(true);
 
-        JPanel topPanel=new JPanel(new GridLayout(2,1));
+        JPanel topPanel = new JPanel(new GridLayout(2, 1));
         topPanel.add(nameLabel);
         topPanel.add(priceLabel);
 
-        add(topPanel,BorderLayout.NORTH);
-        add(new JScrollPane(detailsArea),BorderLayout.CENTER);
+        add(topPanel, BorderLayout.NORTH);
+        add(new JScrollPane(detailsArea), BorderLayout.CENTER);
     }
 }
