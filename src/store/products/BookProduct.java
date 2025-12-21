@@ -7,52 +7,45 @@ package store.products;
 import java.awt.Color;
 
 /**
- * Represents a book product.
- * Includes author name and number of pages.
+ * Represents a book product sold in the store.
+ * Extends Product with author and page count information.
  */
-public class BookProduct extends Product{
+public class BookProduct extends Product {
 
     private String author;
     private int pages;
 
     /**
-     * Creates a new book product.
+     * Creates a new BookProduct.
+     *
      * @param name book title
      * @param price book price
      * @param stock amount in stock
      * @param description book description
+     * @param category product category, must be BOOKS
      * @param color display color
-     * @param imagePath path to image
+     * @param imagePath path to product image
      * @param author book author
      * @param pages number of pages
      */
-    public BookProduct(String name,double price,int stock,String description,Color color,String imagePath,String author,int pages){
-        super(name,price,stock,description,Category.BOOKS,color,imagePath);
-        this.author=author;
-        this.pages=pages;
+    public BookProduct(String name, double price, int stock,
+                       String description, Category category,
+                       Color color, String imagePath,
+                       String author, int pages) {
+        super(name, price, stock, description, Category.BOOKS, color, imagePath);
+        this.author = author;
+        this.pages = pages;
     }
 
     /**
-     * @return book author
-     */
-    public String getAuthor(){
-        return author;
-    }
-
-    /**
-     * @return number of pages
-     */
-    public int getPages(){
-        return pages;
-    }
-
-    /**
-     * @return detailed book description
+     * Returns a detailed textual representation of the book.
+     *
+     * @return book details string
      */
     @Override
-    public String toString(){
-        return super.toString()+
-               "\nAuthor: "+author+
-               "\nPages: "+pages;
+    public String toString() {
+        return super.toString()
+                + "\nAuthor: " + author
+                + "\nPages: " + pages;
     }
 }
