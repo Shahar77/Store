@@ -4,7 +4,6 @@
 // id : 329186118
 package store.gui.orders;
 
-import store.core.Customer;
 import store.orders.Order;
 
 import javax.swing.*;
@@ -12,59 +11,43 @@ import java.awt.*;
 import java.util.List;
 
 /**
- * Window that displays customer's order history.
+ * Window that displays the customer's order history.
+ * Shows all previous orders in a scrollable view.
  */
-public class OrderHistoryWindow extends JFrame{
-    private final Customer customer;
+public class OrderHistoryWindow extends JFrame {
 
     /**
-     * Creates order history window for a customer.
-     * @param customer customer
+     * Creates a new OrderHistoryWindow with the given orders.
+     *
+     * @param orders list of orders to display
      */
-    public OrderHistoryWindow(Customer customer){
-        super("Order History");
-        this.customer=customer;
+    public OrderHistoryWindow(List<Order> orders) {
 
-        setSize(520,420);
+        setTitle("Order History");
+        setSize(500, 400);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        initUI();
-    }
 
-    /**
-     * Initializes UI.
-     */
-    private void initUI(){
-        getContentPane().removeAll();
+        JPanel mainPanel = new JPanel(new BorderLayout());
 
-        JPanel mainPanel=new JPanel(new BorderLayout());
-        JLabel title=new JLabel("Your Orders");
-        title.setHorizontalAlignment(SwingConstants.CENTER);
-        title.setFont(new Font("Arial",Font.BOLD,16));
-        mainPanel.add(title,BorderLayout.NORTH);
+        JLabel title = new JLabel("Your Orders", SwingConstants.CENTER);
+        title.setFont(new Font("Arial", Font.BOLD, 16));
+        mainPanel.add(title, BorderLayout.NORTH);
 
-        JPanel ordersPanel=new JPanel();
-        ordersPanel.setLayout(new BoxLayout(ordersPanel,BoxLayout.Y_AXIS));
+        JPanel ordersPanel = new JPanel();
+        ordersPanel.setLayout(new BoxLayout(ordersPanel, BoxLayout.Y_AXIS));
 
-        List<Order> orders=customer==null?List.of():customer.getOrderHistory();
-
-        if(orders.isEmpty()){
-            JLabel emptyLabel=new JLabel("No orders yet");
-            emptyLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-            ordersPanel.add(emptyLabel);
-        }else{
-            for(Order order:orders){
-                OrderDetailsPanel panel=new OrderDetailsPanel(order);
-                panel.setAlignmentX(Component.LEFT_ALIGNMENT);
-                ordersPanel.add(panel);
+        if (orders.isEmpty()) {
+            ordersPanel.add(new JLabel("No orders yet"));
+        } else {
+            for (Order order : orders) {
+                ordersPanel.add(new OrderDetailsPanel(order));
                 ordersPanel.add(Box.createVerticalStrut(8));
             }
         }
 
-        mainPanel.add(new JScrollPane(ordersPanel),BorderLayout.CENTER);
+        mainPanel.add(new JScrollPane(ordersPanel), BorderLayout.CENTER);
         add(mainPanel);
-
-        revalidate();
-        repaint();
     }
 }
+
