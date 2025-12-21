@@ -2,81 +2,92 @@
 // id : 329185771
 // name : Shahar Ezra
 // id : 329186118
-package store.cart;
+package store.core;
 
+import store.cart.Cart;
+import store.engine.StoreEngine;
+import store.orders.Order;
 import store.products.Product;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * Represents a single item inside a shopping cart.
- * Contains a product and its quantity.
+ * Represents a customer in the store system.
+ * A customer owns a shopping cart and an order history.
  */
-public class CartItem {
+public class Customer extends User {
 
-    private Product product;
-    private int quantity;
+    private Cart cart;
+    private List<Order> orderHistory;
+    private StoreEngine engine;
 
     /**
-     * Creates a new CartItem with the given product and quantity.
+     * Creates a new customer with an empty cart and order history.
      *
-     * @param product product to store
-     * @param quantity initial quantity
+     * @param username customer's username
+     * @param email customer's email
+     * @param engine reference to the store engine
      */
-    public CartItem(Product product, int quantity) {
-        this.product = product;
-        this.quantity = quantity;
+    public Customer(String username, String email, StoreEngine engine) {
+        super(username, email);
+        this.cart = new Cart();
+        this.orderHistory = new ArrayList<>();
+        this.engine = engine;
     }
 
     /**
-     * Returns the product of this cart item.
+     * Returns the customer's shopping cart.
      *
-     * @return product
+     * @return cart
      */
-    public Product getProduct() {
-        return product;
+    public Cart getCart() {
+        return cart;
     }
 
     /**
-     * Returns the quantity of the product.
+     * Returns the customer's order history.
      *
-     * @return quantity
+     * @return list of previous orders
      */
-    public int getQuantity() {
-        return quantity;
+    public List<Order> getOrderHistory() {
+        return orderHistory;
     }
 
     /**
-     * Sets a new quantity for the product.
+     * Adds a product to the cart with the given quantity.
      *
-     * @param q new quantity
-     * @return true if quantity is valid and updated
+     * @param p product to add
+     * @param quantity quantity to add
+     * @return true if added successfully
      */
-    public boolean setQuantity(int q) {
-        if (q > 0) {
-            this.quantity = q;
-            return true;
-        }
-        return false;
+    public boolean addToCart(Product p, int quantity) {
+        if (p == null || quantity <= 0) return false;
+        if (p.getStock() < quantity) return false;
+        return cart.addItem(p, quantity);
     }
 
     /**
-     * Calculates the total price for this cart item.
+     * Removes a product from the cart.
      *
-     * @return total price
+     * @param p product to remove
+     * @return true if removed
      */
-    public double getTotalPrice() {
-        return product.getPrice() * quantity;
+    public boolean removeFromCart(Product p) {
+        if (p == null) return false;
+        return cart.removeItem(p);
     }
 
     /**
-     * Two CartItem objects are equal if they contain the same product.
+     * Performs checkout, creates an order from the cart
+     * and stores it in the customer's order history.
      *
-     * @param o object to compare
-     * @return true if products are equal
+     * @return true if checkout succeeded
      */
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof CartItem)) return false;
-        CartItem other = (CartItem) o;
-        return product.equals(other.product);
+    public boolean checkout() {
+        Order order = engine.createOrderFromCart(cart);
+        if (order == null) return false;
+        orderHistory.add(order);
+        return true;
     }
 }
