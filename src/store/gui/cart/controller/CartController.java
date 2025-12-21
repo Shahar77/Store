@@ -3,7 +3,7 @@
 // name : Shahar Ezra
 // id : 329186118
 package store.gui.cart.controller;
-
+import store.gui.cart.CartPanel;
 import store.cart.Cart;
 import store.products.Product;
 
@@ -14,6 +14,8 @@ import store.products.Product;
 public class CartController {
 
     private Cart cart;
+    private CartPanel cartPanel;
+
 
     /**
      * Creates a new CartController.
@@ -32,8 +34,12 @@ public class CartController {
     public void increase(Product p) {
         if (p != null) {
             cart.addItem(p, 1);
+            if (cartPanel != null) {
+                cartPanel.refresh();
+            }
         }
     }
+
 
     /**
      * Decreases the quantity of a product in the cart by one.
@@ -44,6 +50,9 @@ public class CartController {
         if (p != null) {
             cart.decreaseItem(p);
         }
+    }
+    public void setCartPanel(CartPanel cartPanel) {
+        this.cartPanel = cartPanel;
     }
 
     /**
