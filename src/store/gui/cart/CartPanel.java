@@ -6,128 +6,97 @@ package store.gui.cart;
 
 import store.cart.Cart;
 import store.cart.CartItem;
-import store.core.Customer;
 import store.gui.cart.controller.CartController;
+import store.engine.StoreEngine;
 
 import javax.swing.*;
 import java.awt.*;
 
 /**
- * Panel that displays the customer's cart and allows checkout.
+ * Panel that displays the shopping cart and its contents.
+ * Allows checkout and item management.
  */
-public class CartPanel extends JPanel{
-    private final Customer customer;
-    private final Cart cart;
-    private final CartController controller;
+public class CartPanel extends JPanel {
+
+    private Cart cart;
+    private StoreEngine engine;
+
     private JPanel itemsPanel;
     private JLabel totalLabel;
     private JButton checkoutButton;
 
     /**
-     * Creates cart panel for a given customer.
-     * @param customer customer
+     * Creates a new CartPanel for the given cart.
+     *
+     * @param cart shopping cart
      */
-    public CartPanel(Customer customer){
-        this.customer=customer;
-        cart=customer==null?null:customer.getCart();
-        controller=cart==null?null:new CartController(cart);
+    private CartController controller;
+
+    public CartPanel(Cart cart, CartController controller, StoreEngine engine) {
+        this.cart = cart;
+        this.controller = controller;
+        this.engine = engine;
 
         setLayout(new BorderLayout());
+
         initTop();
         initCenter();
         initBottom();
-        refreshAfterChange();
+
+        refresh();
+    }
+
+
+    /**
+     * Initializes the top section of the panel.
+     */
+    private void initTop() {
+        JLabel title = new JLabel("Your Cart", SwingConstants.CENTER);
+        add(title, BorderLayout.NORTH);
     }
 
     /**
-     * Initializes top area.
+     * Initializes the center section containing cart items.
      */
-    private void initTop(){
-        JLabel title=new JLabel("Your Cart");
-        title.setHorizontalAlignment(SwingConstants.CENTER);
-        add(title,BorderLayout.NORTH);
+    private void initCenter() {
+        itemsPanel = new JPanel();
+        itemsPanel.setLayout(new BoxLayout(itemsPanel, BoxLayout.Y_AXIS));
+        add(new JScrollPane(itemsPanel), BorderLayout.CENTER);
     }
 
     /**
-     * Initializes center area.
+     * Initializes the bottom section with total and checkout button.
      */
-    private void initCenter(){
-        itemsPanel=new JPanel();
-        itemsPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(Color.BLACK,2),
-                BorderFactory.createEmptyBorder(10,10,10,10)
-        ));
-        itemsPanel.setLayout(new BoxLayout(itemsPanel,BoxLayout.Y_AXIS));
-        add(new JScrollPane(itemsPanel),BorderLayout.CENTER);
+    private void initBottom() {
+        JPanel bottom = new JPanel(new BorderLayout());
+
+        totalLabel = new JLabel();
+        checkoutButton = new JButton("Checkout");
+
+        bottom.add(totalLabel, BorderLayout.WEST);
+        bottom.add(checkoutButton, BorderLayout.EAST);
+
+        add(bottom, BorderLayout.SOUTH);
+        checkoutButton.addActionListener(e -> {
+            JFrame parent = (JFrame) SwingUtilities.getWindowAncestor(this);
+            new CheckoutDialog(parent, cart, engine);
+        });
+
     }
 
     /**
-     * Initializes bottom area.
+     * Refreshes the cart panel UI.
      */
-    private void initBottom(){
-        JPanel bottomPanel=new JPanel(new BorderLayout());
-        totalLabel=new JLabel();
-        checkoutButton=new JButton("Checkout");
-        checkoutButton.addActionListener(e->openCheckout());
-        bottomPanel.add(totalLabel,BorderLayout.WEST);
-        bottomPanel.add(checkoutButton,BorderLayout.EAST);
-        add(bottomPanel,BorderLayout.SOUTH);
-    }
-
-    /**
-     * Refreshes cart items UI.
-     */
-    private void refreshItems(){
+    public void refresh() {
         itemsPanel.removeAll();
-        if(cart!=null){
-            for(CartItem item:cart.getItems()){
-                itemsPanel.add(new CartItemView(item,this,controller));
-                itemsPanel.add(Box.createVerticalStrut(6));
-            }
+
+        for (CartItem item : cart.getItems()) {
+            itemsPanel.add(new CartItemView(item, controller));
         }
-        itemsPanel.revalidate();
-        itemsPanel.repaint();
-    }
 
-    /**
-     * Updates total label.
-     */
-    public void updateTotal(){
-        if(cart==null){
-            totalLabel.setText("Total: 0 ₪");
-            return;
-        }
-        totalLabel.setText("Total: "+cart.calculateTotal()+" ₪");
-    }
+        totalLabel.setText("Total: ₪" + cart.calculateTotal());
 
-    /**
-     * Enables/disables checkout depending on cart state.
-     */
-    private void updateCheckoutEnabled(){
-        checkoutButton.setEnabled(cart!=null&&!cart.getItems().isEmpty());
-    }
-
-    /**
-     * Opens checkout dialog.
-     */
-    private void openCheckout(){
-        if(cart==null||cart.getItems().isEmpty()){
-            JOptionPane.showMessageDialog(this,"Cart is empty");
-            refreshAfterChange();
-            return;
-        }
-        JFrame frame=(JFrame)SwingUtilities.getWindowAncestor(this);
-        CheckoutDialog dialog=new CheckoutDialog(frame,customer);
-        dialog.setVisible(true);
-        refreshAfterChange();
-    }
-
-    /**
-     * Refreshes everything after cart change.
-     */
-    public void refreshAfterChange(){
-        refreshItems();
-        updateTotal();
-        updateCheckoutEnabled();
+        revalidate();
+        repaint();
     }
 }
