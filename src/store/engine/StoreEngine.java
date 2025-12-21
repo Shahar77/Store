@@ -6,64 +6,56 @@ package store.engine;
 
 import store.cart.Cart;
 import store.cart.CartItem;
-import store.core.Customer;
 import store.orders.Order;
 import store.products.Product;
 
 import java.util.ArrayList;
 import java.util.List;
+import store.orders.OrderManager;
+
 
 /**
- * Central engine of the store system.
- * Manages products, customers, cart and order creation.
- * Acts as the API layer between Model and GUI.
+ * Central business logic of the store system.
+ * Responsible for managing products and creating orders.
  */
-public class StoreEngine{
+public class StoreEngine {
 
     private List<Product> products;
-    private List<Order> allOrders;
-    private List<Customer> customers;
-    private Cart cart;
     private int nextOrderId;
+    private OrderManager orderManager;
+
 
     /**
-     * Creates a new StoreEngine with empty collections.
+     * Creates a new StoreEngine with empty product list
+     * and initializes the order ID counter.
      */
-    public StoreEngine(){
-        products=new ArrayList<>();
-        allOrders=new ArrayList<>();
-        customers=new ArrayList<>();
-        cart=new Cart();
-        nextOrderId=1;
+    public StoreEngine() {
+        this.products = new ArrayList<>();
+        this.nextOrderId = 1;
+        orderManager = new OrderManager();
+
     }
 
     /**
      * Adds a product to the store.
+     *
      * @param p product to add
      */
-    public void addProduct(Product p){
-        if(p!=null){
+    public void addProduct(Product p) {
+        if (p != null) {
             products.add(p);
         }
     }
 
     /**
-     * Returns all products in the store.
-     * @return list of all products
-     */
-    public List<Product> getAllProducts(){
-        return new ArrayList<>(products);
-    }
-
-    /**
-     * Returns only products with stock greater than zero.
+     * Returns all products that are currently in stock.
+     *
      * @return list of available products
      */
-    public List<Product> getAvailableProducts(){
-        List<Product> available=new ArrayList<>();
-        for(int i=0;i<products.size();i++){
-            Product p=products.get(i);
-            if(p.getStock()>0){
+    public List<Product> getAvailableProducts() {
+        List<Product> available = new ArrayList<>();
+        for (Product p : products) {
+            if (p.getStock() > 0) {
                 available.add(p);
             }
         }
@@ -71,72 +63,33 @@ public class StoreEngine{
     }
 
     /**
-     * Registers a new customer if username is unique.
-     * @param c customer to register
-     * @return true if registered,false otherwise
+     * Creates an order from the given shopping cart.
+     * The cart will be cleared after successful order creation.
+     *
+     * @param cart shopping cart
+     * @return created Order or null if cart is empty or null
      */
-    public boolean registerCustomer(Customer c){
-        if(c==null){
-            return false;
-        }
-        for(int i=0;i<customers.size();i++){
-            if(customers.get(i).getUsername().equals(c.getUsername())){
-                return false;
-            }
-        }
-        customers.add(c);
-        return true;
-    }
-
-    /**
-     * Returns the active shopping cart.
-     * @return cart instance
-     */
-    public Cart getCart(){
-        return cart;
-    }
-
-    /**
-     * Adds one unit of a product to the cart.
-     * @param p product to add
-     * @return true if added successfully
-     */
-    public boolean addToCart(Product p){
-        if(p==null){
-            return false;
-        }
-        if(p.getStock()<=0){
-            return false;
-        }
-        return cart.addItem(p,1);
-    }
-
-    /**
-     * Creates an order from the current cart.
-     * Copies cart items, saves order and clears cart.
-     * @return created Order or null if cart is empty
-     */
-    public Order checkout(){
-        if(cart.getItems().isEmpty()){
+    public Order createOrderFromCart(Cart cart) {
+        if (cart == null || cart.getItems().isEmpty()) {
             return null;
         }
-        double total=cart.calculateTotal();
-        List<CartItem> itemsCopy=new ArrayList<>();
-        for(int i=0;i<cart.getItems().size();i++){
-            itemsCopy.add(cart.getItems().get(i));
+
+        List<CartItem> itemsCopy = new ArrayList<>();
+        for (CartItem ci : cart.getItems()) {
+            itemsCopy.add(ci);
         }
-        Order order=new Order(nextOrderId,itemsCopy,total);
-        allOrders.add(order);
-        nextOrderId++;
+
+        Order order = new Order(
+                nextOrderId++,
+                itemsCopy,
+                cart.calculateTotal()
+        );
+
         cart.clear();
         return order;
     }
-
-    /**
-     * Returns all orders created in the system.
-     * @return list of orders
-     */
-    public List<Order> getOrderHistory(){
-        return new ArrayList<>(allOrders);
+    public OrderManager getOrderManager() {
+        return orderManager;
     }
+
 }
