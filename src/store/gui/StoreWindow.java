@@ -1,44 +1,51 @@
-// name : Sarah Gabay
-// id : 329185771
-// name : Shahar Ezra
-// id : 329186118
 package store.gui;
 
 import store.engine.StoreEngine;
+import store.cart.Cart;
 import store.gui.cart.CartPanel;
+import store.gui.cart.controller.CartController;
 import store.gui.catalog.controller.CatalogController;
-
+import javax.swing.JPanel;
 import javax.swing.*;
 import java.awt.*;
+import store.gui.orders.OrderHistoryWindow;
+import store.orders.OrderManager;
 
-/**
- * Main application window.
- */
-public class StoreWindow extends JFrame{
-    private final StoreEngine engine;
+public class StoreWindow extends JFrame {
 
-    /**
-     * Creates the main window.
-     * @param engine store engine
-     */
-    public StoreWindow(StoreEngine engine){
-        this.engine=engine;
+    public StoreWindow(StoreEngine engine) {
 
         setTitle("Store");
-        setSize(1000,650);
+        setSize(1000, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setLayout(new BorderLayout());
 
-        CatalogController catalogController=new CatalogController(engine);
-        JPanel catalogPanel=catalogController.createCatalogPanel();
+        Cart cart = new Cart();
+        CartController cartController = new CartController(cart);
 
-        JPanel cartPanel=new CartPanel(engine.getActiveCustomer());
+        CatalogController catalogController =
+                new CatalogController(engine, cartController);
 
-        JSplitPane split=new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,new JScrollPane(catalogPanel),cartPanel);
-        split.setDividerLocation(650);
+        JPanel catalogPanel = catalogController.createCatalogPanel();
+        CartPanel cartPanel = new CartPanel(cart, cartController, engine);
+        cartController.setCartPanel(cartPanel);
 
-        add(split,BorderLayout.CENTER);
+        JButton historyButton = new JButton("Order History");
+        historyButton.addActionListener(e ->
+                new OrderHistoryWindow(
+                        OrderManager.getOrders()
+                )
+        );
+        add(historyButton, BorderLayout.NORTH);
+
+
+        JSplitPane splitPane = new JSplitPane(
+                JSplitPane.HORIZONTAL_SPLIT,
+                new JScrollPane(catalogPanel),
+                cartPanel
+        );
+
+        splitPane.setDividerLocation(650);
+        add(splitPane);
     }
 }
-
