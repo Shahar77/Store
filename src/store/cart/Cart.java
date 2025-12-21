@@ -106,14 +106,12 @@ public class Cart{
     public List<CartItem> getItems(){
         return items;
     }
-}
+
 
     /**
      * Returns the list of cart items.
      *
      * @return list of CartItem objects
      */
-    public List<CartItem> getItems() {
-        return items;
-    }
+
 }

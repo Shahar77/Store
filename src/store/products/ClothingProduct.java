@@ -1,14 +1,7 @@
-// name : Sarah Gabay
-// id : 329185771
-// name : Shahar Ezra
-// id : 329186118
 package store.products;
-
-import java.awt.Color;
 
 /**
  * Represents a clothing product.
- * Includes clothing size information.
  */
 public class ClothingProduct extends Product{
 
@@ -16,16 +9,21 @@ public class ClothingProduct extends Product{
 
     /**
      * Creates a new clothing product.
-     * @param name product name
-     * @param price product price
-     * @param stock amount in stock
-     * @param description product description
-     * @param color display color
-     * @param imagePath path to image
+     * @param name clothing name
+     * @param price clothing price
+     * @param stock available stock
      * @param size clothing size
+     * @param imagePath image path
      */
-    public ClothingProduct(String name,double price,int stock,String description,Color color,String imagePath,String size){
-        super(name,price,stock,description,Category.CLOTHING,color,imagePath);
+    public ClothingProduct(String name,double price,int stock,String size,String imagePath){
+        super(
+                name,
+                price,
+                stock,
+                Category.CLOTHING,
+                "Clothing item, size "+size,
+                imagePath
+        );
         this.size=size;
     }
 
@@ -35,14 +33,4 @@ public class ClothingProduct extends Product{
     public String getSize(){
         return size;
     }
-
-    /**
-     * @return detailed clothing description
-     */
-    @Override
-    public String toString(){
-        return super.toString()+
-               "\nSize: "+size;
-    }
 }
-

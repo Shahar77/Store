@@ -9,6 +9,7 @@ import store.cart.CartItem;
 import store.core.Customer;
 import store.orders.Order;
 import store.products.Product;
+import store.products.StockManageable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,7 @@ public class StoreEngine{
     private List<Customer> customers;
     private Cart cart;
     private int nextOrderId;
+    private Customer activeCustomer;
 
     /**
      * Creates a new StoreEngine with empty collections.
@@ -63,8 +65,10 @@ public class StoreEngine{
         List<Product> available=new ArrayList<>();
         for(int i=0;i<products.size();i++){
             Product p=products.get(i);
-            if(p.getStock()>0){
-                available.add(p);
+            if(p instanceof StockManageable){
+                if(((StockManageable)p).getStock()>0){
+                    available.add(p);
+                }
             }
         }
         return available;
@@ -98,6 +102,7 @@ public class StoreEngine{
 
     /**
      * Adds one unit of a product to the cart.
+     * Checks stock only if product supports stock management.
      * @param p product to add
      * @return true if added successfully
      */
@@ -105,8 +110,10 @@ public class StoreEngine{
         if(p==null){
             return false;
         }
-        if(p.getStock()<=0){
-            return false;
+        if(p instanceof StockManageable){
+            if(((StockManageable)p).getStock()<=0){
+                return false;
+            }
         }
         return cart.addItem(p,1);
     }
@@ -130,6 +137,21 @@ public class StoreEngine{
         nextOrderId++;
         cart.clear();
         return order;
+    }
+
+    /**
+     * Sets the currently active customer.
+     * @param customer active customer
+     */
+    public void setActiveCustomer(Customer customer){
+        this.activeCustomer=customer;
+    }
+
+    /**
+     * @return currently active customer
+     */
+    public Customer getActiveCustomer(){
+        return activeCustomer;
     }
 
     /**

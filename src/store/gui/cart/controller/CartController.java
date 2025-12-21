@@ -1,68 +1,46 @@
-// name : Sarah Gabay
-// id : 329185771
-// name : Shahar Ezra
-// id : 329186118
 package store.gui.cart.controller;
 
+import store.engine.StoreEngine;
 import store.cart.Cart;
 import store.products.Product;
 
 /**
- * Controller responsible for handling cart actions from the GUI.
- * Acts as a bridge between the cart view and the cart model.
+ * Controller for cart-related actions.
+ * Acts as a mediator between the cart GUI and the store engine.
  */
-public class CartController {
+public class CartController{
 
-    private Cart cart;
+    private final StoreEngine engine;
 
     /**
-     * Creates a new CartController.
-     *
-     * @param cart shopping cart to control
+     * Creates a cart controller.
+     * @param engine store engine
      */
-    public CartController(Cart cart) {
-        this.cart = cart;
+    public CartController(StoreEngine engine){
+        this.engine=engine;
     }
 
     /**
-     * Increases the quantity of a product in the cart by one.
-     *
-     * @param p product to increase
+     * Adds one unit of a product to the cart.
+     * @param p product to add
      */
-    public void increase(Product p) {
-        if (p != null) {
-            cart.addItem(p, 1);
-        }
-    }
-
-    /**
-     * Decreases the quantity of a product in the cart by one.
-     *
-     * @param p product to decrease
-     */
-    public void decrease(Product p) {
-        if (p != null) {
-            cart.decreaseItem(p);
-        }
+    public void add(Product p){
+        engine.addToCart(p);
     }
 
     /**
      * Removes a product completely from the cart.
-     *
      * @param p product to remove
      */
-    public void remove(Product p) {
-        if (p != null) {
-            cart.removeItem(p);
-        }
+    public void remove(Product p){
+        engine.getCart().removeItem(p);
     }
 
     /**
-     * Returns the controlled shopping cart.
-     *
-     * @return cart
+     * Returns the current cart.
+     * @return cart instance
      */
-    public Cart getCart() {
-        return cart;
+    public Cart getCart(){
+        return engine.getCart();
     }
 }

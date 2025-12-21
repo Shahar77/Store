@@ -1,71 +1,54 @@
-// name : Sarah Gabay
-// id : 329185771
-// name : Shahar Ezra
-// id : 329186118
 package store.gui.cart;
 
-import store.core.Customer;
-import store.gui.cart.controller.OrderController;
-import store.io.orders.OrderHistoryWriter;
+import store.engine.StoreEngine;
 import store.orders.Order;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 
 /**
- * Checkout dialog that confirms payment and creates an order.
+ * Dialog responsible for checkout confirmation.
  */
 public class CheckoutDialog extends JDialog{
-    private final Customer customer;
-    private final JButton confirmButton;
+
+    private final StoreEngine engine;
 
     /**
-     * Creates checkout dialog.
+     * Creates a checkout dialog.
      * @param parent parent frame
-     * @param customer customer
+     * @param engine store engine
      */
-    public CheckoutDialog(JFrame parent,Customer customer){
+    public CheckoutDialog(JFrame parent,StoreEngine engine){
         super(parent,"Checkout",true);
-        this.customer=customer;
+        this.engine=engine;
+        initUI();
+    }
 
+    /**
+     * Initializes checkout UI.
+     */
+    private void initUI(){
         setLayout(new BorderLayout());
-        confirmButton=new JButton("Confirm Payment");
+        add(new JLabel("Confirm checkout?"),BorderLayout.CENTER);
+
+        JButton confirmButton=new JButton("Confirm");
         confirmButton.addActionListener(e->confirmCheckout());
-        add(confirmButton,BorderLayout.CENTER);
+        add(confirmButton,BorderLayout.SOUTH);
 
         pack();
-        setLocationRelativeTo(parent);
+        setLocationRelativeTo(getParent());
     }
 
     /**
-     * Confirms checkout, creates order and clears cart.
+     * Confirms checkout and creates an order.
      */
     private void confirmCheckout(){
-        if(customer==null||customer.getCart().getItems().isEmpty()){
-            JOptionPane.showMessageDialog(this,"Cart is empty","Error",JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        confirmButton.setEnabled(false);
-        Order order=OrderController.checkout(customer);
-
+        Order order=engine.checkout();
         if(order==null){
-            JOptionPane.showMessageDialog(this,"Could not create order","Error",JOptionPane.ERROR_MESSAGE);
-            confirmButton.setEnabled(true);
-            return;
+            JOptionPane.showMessageDialog(this,"Cart is empty");
+        }else{
+            JOptionPane.showMessageDialog(this,"Order created successfully");
+            dispose();
         }
-
-        order.pay();
-
-        try{
-            OrderHistoryWriter.write(order,"orders_history.csv");
-        }catch(IOException ex){
-            JOptionPane.showMessageDialog(this,"Order saved in memory, file write failed","Warning",JOptionPane.WARNING_MESSAGE);
-        }
-
-        JOptionPane.showMessageDialog(this,"Order #"+order.getOrderID()+" created successfully!");
-        dispose();
     }
 }
-

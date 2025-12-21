@@ -1,66 +1,54 @@
-// name : Sarah Gabay
-// id : 329185771
-// name : Shahar Ezra
-// id : 329186118
+package store;
+
 import store.engine.StoreEngine;
 import store.gui.StoreWindow;
-import store.products.*;
-import java.awt.Color;
+import store.products.BookProduct;
+import store.products.ClothingProduct;
+import store.products.ElectronicsProduct;
+
+import javax.swing.*;
 
 /**
  * Application entry point.
+ * Initializes the store engine, loads demo data and starts the GUI.
  */
 public class Main{
 
     /**
      * Starts the store application.
-     *
      * @param args program arguments
      */
     public static void main(String[] args){
-        StoreEngine engine=new StoreEngine();
+        SwingUtilities.invokeLater(() -> {
 
-        engine.addProduct(
-            new BookProduct(
-                "Java Basics",
-                120,
-                10,
-                "Intro to Java programming",
-                Category.BOOKS,
-                Color.WHITE,
-                "images/java.png",
-                "John Doe",
-                350
-            )
-        );
+            StoreEngine engine=new StoreEngine();
 
-        engine.addProduct(
-            new ClothingProduct(
-                "T-Shirt",
-                80,
-                15,
-                "Cotton shirt",
-                Category.CLOTHING,
-                Color.BLACK,
-                "images/shirt.png",
-                "M"
-            )
-        );
+            engine.addProduct(new BookProduct(
+                    "Clean Code",
+                    120.0,
+                    10,
+                    "Robert C. Martin",
+                    "images/clean_code.png"
+            ));
 
-        engine.addProduct(
-            new ElectronicsProduct(
-                "Laptop",
-                3500,
-                5,
-                "Powerful laptop",
-                Category.ELECTRONICS,
-                Color.GRAY,
-                "images/laptop.png",
-                24,
-                "Lenovo"
-            )
-        );
+            engine.addProduct(new ClothingProduct(
+                    "T-Shirt",
+                    59.9,
+                    20,
+                    "M",
+                    "images/tshirt.png"
+            ));
 
-        new StoreWindow(engine).setVisible(true);
+            engine.addProduct(new ElectronicsProduct(
+                    "Laptop",
+                    4200.0,
+                    5,
+                    24,
+                    "images/laptop.png"
+            ));
+
+            StoreWindow window=new StoreWindow(engine);
+            window.setVisible(true);
+        });
     }
 }

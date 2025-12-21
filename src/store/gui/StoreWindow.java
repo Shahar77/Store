@@ -33,7 +33,7 @@ public class StoreWindow extends JFrame{
         CatalogController catalogController=new CatalogController(engine);
         JPanel catalogPanel=catalogController.createCatalogPanel();
 
-        JPanel cartPanel=new CartPanel(engine.getActiveCustomer());
+        JPanel cartPanel=new CartPanel(engine);
 
         JSplitPane split=new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,new JScrollPane(catalogPanel),cartPanel);
         split.setDividerLocation(650);
