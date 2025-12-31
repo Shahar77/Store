@@ -1,28 +1,18 @@
-/**
- * Submitted by:
- * Sarah Gabay - ID 329185771
- * Shahar Ezra - ID 329186118
- */
-
 package store;
 
 import store.engine.StoreEngine;
 import store.gui.StoreWindow;
+import store.gui.admin.thread.AdminRunnable;
 import store.products.*;
 import java.awt.Color;
 
-/**
- * Application entry point.
- */
-public class Main{
+import javax.swing.SwingUtilities;
 
-    /**
-     * Starts the store application.
-     *
-     * @param args program arguments
-     */
-    public static void main(String[] args){
-        StoreEngine engine=new StoreEngine();
+public class Main {
+
+    public static void main(String[] args) {
+
+        StoreEngine engine = new StoreEngine();
 
         engine.addProduct(
                 new BookProduct(
@@ -65,6 +55,10 @@ public class Main{
                 )
         );
 
-        new StoreWindow(engine).setVisible(true);
+        // חלון החנות על EDT
+        SwingUtilities.invokeLater(() -> new StoreWindow(engine).setVisible(true));
+
+        // חלון מנהל בתוך Thread נפרד, כמו דרישת התרגיל
+        new Thread(new AdminRunnable(engine)).start();
     }
 }

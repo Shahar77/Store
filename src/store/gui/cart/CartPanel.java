@@ -50,10 +50,10 @@ public class CartPanel extends JPanel {
     /**
      * Initializes the top section of the panel.
      */
-    private void initTop() {
-        JLabel title = new JLabel("Your Cart", SwingConstants.CENTER);
-        add(title, BorderLayout.NORTH);
-    }
+        private void initTop() {
+            JLabel title = new JLabel("Your Cart", SwingConstants.CENTER);
+            add(title, BorderLayout.NORTH);
+        }
 
     /**
      * Initializes the center section containing cart items.
