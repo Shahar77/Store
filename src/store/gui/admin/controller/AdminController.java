@@ -6,17 +6,16 @@ import store.products.Category;
 import store.products.Product;
 import store.products.SimpleProduct;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class AdminController {
-
     private final StoreEngine engine;
     private final StoreFileManager fileManager;
 
-    // Thread אחד למנהל, כל פעולה נכנסת לתור מסודר
     private final ExecutorService adminExecutor = Executors.newSingleThreadExecutor();
 
     public AdminController(StoreEngine engine) {
@@ -24,8 +23,9 @@ public class AdminController {
         this.fileManager = new StoreFileManager(engine);
     }
 
-    public void addSimpleProduct(String name, double price, int stock, String description, Category category, String imagePath) {
-        adminExecutor.submit(() -> {
+    public Future<?> addSimpleProduct(String name, double price, int stock, String description,
+                                      Category category, String imagePath) {
+        return adminExecutor.submit(() -> {
             synchronized (engine) {
                 SimpleProduct p = new SimpleProduct(
                         name,
@@ -41,8 +41,8 @@ public class AdminController {
         });
     }
 
-    public void updateStockByName(String name, Category category, int newStock) {
-        adminExecutor.submit(() -> {
+    public Future<?> updateStockByName(String name, Category category, int newStock) {
+        return adminExecutor.submit(() -> {
             synchronized (engine) {
                 Product target = findByNameAndCategory(engine.getAllProducts(), name, category);
                 if (target == null) {
@@ -53,29 +53,30 @@ public class AdminController {
                 int current = target.getStock();
                 int diff = newStock - current;
 
-                if (diff > 0) {
-                    target.increaseStock(diff);
-                } else if (diff < 0) {
-                    target.decreaseStock(-diff);
-                }
+                if (diff > 0) target.increaseStock(diff);
+                else if (diff < 0) target.decreaseStock(-diff);
             }
         });
     }
 
-    public void saveProducts(String path) {
-        adminExecutor.submit(() -> {
+    public Future<?> saveProducts(String path) {
+        return adminExecutor.submit(() -> {
             synchronized (engine) {
                 fileManager.saveProductsToFile(path);
             }
         });
     }
 
-    public void loadProducts(String path) {
-        adminExecutor.submit(() -> {
+    public Future<?> loadProducts(String path) {
+        return adminExecutor.submit(() -> {
             synchronized (engine) {
                 fileManager.loadProductsFromFile(path);
             }
         });
+    }
+
+    public void shutdown() {
+        adminExecutor.shutdown();
     }
 
     private Product findByNameAndCategory(List<Product> products, String name, Category category) {

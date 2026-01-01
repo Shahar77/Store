@@ -102,6 +102,15 @@ public class Cart {
     }
 
     /**
+     * Alias for calculateTotal(), used by other modules (engine/checkout).
+     *
+     * @return total cost
+     */
+    public double getTotalPrice() {
+        return calculateTotal();
+    }
+
+    /**
      * Removes all items from the cart.
      */
     public void clear() {
@@ -116,6 +125,7 @@ public class Cart {
     public List<CartItem> getItems() {
         return items;
     }
+
     /**
      * Checks if a product exists in the cart.
      *
@@ -143,5 +153,4 @@ public class Cart {
         }
         return 0;
     }
-
 }

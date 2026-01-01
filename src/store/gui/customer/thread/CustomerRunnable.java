@@ -1,22 +1,22 @@
-package store.gui.admin.thread;
+package store.gui.customer.thread;
 
 import store.engine.StoreEngine;
-import store.gui.admin.AdminWindow;
+import store.gui.launcher.LauncherWindow;
 
 import javax.swing.*;
 
-public class AdminRunnable implements Runnable {
+public class CustomerRunnable implements Runnable {
 
     private final StoreEngine engine;
 
-    public AdminRunnable(StoreEngine engine) {
+    public CustomerRunnable(StoreEngine engine) {
         this.engine = engine;
     }
 
     @Override
     public void run() {
         SwingUtilities.invokeLater(() -> {
-            AdminWindow w = new AdminWindow(engine);
+            LauncherWindow w = new LauncherWindow(engine);
             w.setVisible(true);
         });
     }

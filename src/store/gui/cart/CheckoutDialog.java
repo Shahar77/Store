@@ -1,61 +1,50 @@
-// name : Sarah Gabay
-// id : 329185771
-// name : Shahar Ezra
-// id : 329186118
 package store.gui.cart;
 
 import store.cart.Cart;
 import store.engine.StoreEngine;
 import store.orders.Order;
+import store.orders.OrderManager;
 
 import javax.swing.*;
 import java.awt.*;
-import store.orders.OrderManager;
 
-
-/**
- * Dialog window that handles the checkout process.
- * Allows the user to confirm payment and create an order.
- */
 public class CheckoutDialog extends JDialog {
 
-    private Cart cart;
-    private StoreEngine engine;
-    private JButton confirmButton;
+    private final StoreEngine engine;
+    private final Cart cart;
 
-    /**
-     * Creates a new CheckoutDialog.
-     *
-     * @param parent parent frame
-     * @param cart shopping cart
-     * @param engine store engine
-     */
-    public CheckoutDialog(JFrame parent, Cart cart, StoreEngine engine) {
+    public CheckoutDialog(JFrame parent, StoreEngine engine, Cart cart) {
         super(parent, "Checkout", true);
-        this.cart = cart;
-        this.engine = engine;
 
+        this.engine = engine;
+        this.cart = cart;
+
+        setSize(420, 220);
+        setLocationRelativeTo(parent);
         setLayout(new BorderLayout());
 
-        confirmButton = new JButton("Confirm Payment");
-        confirmButton.addActionListener(e -> confirmCheckout());
-
-        add(new JLabel("Confirm your order", SwingConstants.CENTER), BorderLayout.NORTH);
-        add(confirmButton, BorderLayout.CENTER);
-
-        pack();
-        setLocationRelativeTo(parent);
-        setVisible(true);
-
+        initUi();
     }
 
-    /**
-     * Confirms the checkout process.
-     * Creates an order from the cart and clears it.
-     */
-    private void confirmCheckout() {
-        System.out.println("Checkout clicked, items: " + cart.getItems().size());
+    private void initUi() {
+        JLabel label = new JLabel("Confirm purchase?", SwingConstants.CENTER);
+        add(label, BorderLayout.CENTER);
 
+        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.CENTER));
+
+        JButton yes = new JButton("Yes");
+        JButton no = new JButton("No");
+
+        yes.addActionListener(e -> confirmCheckout());
+        no.addActionListener(e -> dispose());
+
+        buttons.add(yes);
+        buttons.add(no);
+
+        add(buttons, BorderLayout.SOUTH);
+    }
+
+    private void confirmCheckout() {
         if (cart.getItems().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Cart is empty");
             return;
@@ -69,24 +58,11 @@ public class CheckoutDialog extends JDialog {
         }
 
         OrderManager.add(order);
-
         order.pay();
 
         cart.clear();
-        JOptionPane.showMessageDialog(
-                this,
-                "Order #" + order.getOrderID() + " completed successfully"
-        );
+        JOptionPane.showMessageDialog(this, "Order #" + order.getOrderID() + " completed successfully");
 
         dispose();
-        if (cart.getItems().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Cart is empty");
-            return;
-        }
-        cart.clear();
-
-
     }
-
-
 }

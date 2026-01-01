@@ -1,64 +1,59 @@
 package store;
 
 import store.engine.StoreEngine;
-import store.gui.StoreWindow;
-import store.gui.admin.thread.AdminRunnable;
-import store.products.*;
-import java.awt.Color;
+import store.gui.launcher.LauncherWindow;
+import store.products.Category;
+import store.products.Product;
+import store.products.SimpleProduct;
 
-import javax.swing.SwingUtilities;
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
 
     public static void main(String[] args) {
 
         StoreEngine engine = new StoreEngine();
+        seedProducts(engine);
 
-        engine.addProduct(
-                new BookProduct(
-                        "Java Basics",
-                        120,
-                        10,
-                        "Intro to Java programming",
-                        Category.BOOKS,
-                        Color.WHITE,
-                        "images/java.png",
-                        "John Doe",
-                        350
-                )
-        );
+        LauncherWindow w = new LauncherWindow(engine);
+        w.setVisible(true);
+    }
 
-        engine.addProduct(
-                new ClothingProduct(
-                        "T-Shirt",
-                        80,
-                        15,
-                        "Cotton shirt",
-                        Category.CLOTHING,
-                        Color.BLACK,
-                        "images/shirt.png",
-                        "M"
-                )
-        );
+    private static void seedProducts(StoreEngine engine) {
+        List<Product> products = new ArrayList<>();
 
-        engine.addProduct(
-                new ElectronicsProduct(
-                        "Laptop",
-                        3500,
-                        5,
-                        "Powerful laptop",
-                        Category.ELECTRONICS,
-                        Color.GRAY,
-                        "images/laptop.png",
-                        24,
-                        "Lenovo"
-                )
-        );
+        products.add(new SimpleProduct(
+                "T-Shirt",
+                59.9,
+                20,
+                "Basic t-shirt",
+                Category.CLOTHING,
+                Color.WHITE,
+                "images/default.png"
+        ));
 
-        // חלון החנות על EDT
-        SwingUtilities.invokeLater(() -> new StoreWindow(engine).setVisible(true));
+        products.add(new SimpleProduct(
+                "Book",
+                39.9,
+                15,
+                "Nice book",
+                Category.BOOKS,
+                Color.WHITE,
+                "images/default.png"
+        ));
 
-        // חלון מנהל בתוך Thread נפרד, כמו דרישת התרגיל
-        new Thread(new AdminRunnable(engine)).start();
+        products.add(new SimpleProduct(
+                "Headphones",
+                199.0,
+                10,
+                "Wireless headphones",
+                Category.ELECTRONICS,
+                Color.WHITE,
+                "images/default.png"
+        ));
+
+        engine.setProducts(products);
     }
 }

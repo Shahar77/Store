@@ -40,8 +40,7 @@ public class StoreWindow extends JFrame {
         setLayout(new BorderLayout());
 
         Cart cart = new Cart();
-        CartController cartController = new CartController(cart);
-
+        CartController cartController = new CartController(this, engine, cart);
         catalogController = new CatalogController(engine, cartController);
 
         JPanel catalogPanel = catalogController.createCatalogPanel();

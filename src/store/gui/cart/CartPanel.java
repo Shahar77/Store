@@ -6,8 +6,8 @@ package store.gui.cart;
 
 import store.cart.Cart;
 import store.cart.CartItem;
-import store.gui.cart.controller.CartController;
 import store.engine.StoreEngine;
+import store.gui.cart.controller.CartController;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,19 +18,14 @@ import java.awt.*;
  */
 public class CartPanel extends JPanel {
 
-    private Cart cart;
-    private StoreEngine engine;
+    private final Cart cart;
+    private final StoreEngine engine;
 
     private JPanel itemsPanel;
     private JLabel totalLabel;
     private JButton checkoutButton;
 
-    /**
-     * Creates a new CartPanel for the given cart.
-     *
-     * @param cart shopping cart
-     */
-    private CartController controller;
+    private final CartController controller;
 
     public CartPanel(Cart cart, CartController controller, StoreEngine engine) {
         this.cart = cart;
@@ -46,27 +41,17 @@ public class CartPanel extends JPanel {
         refresh();
     }
 
+    private void initTop() {
+        JLabel title = new JLabel("Your Cart", SwingConstants.CENTER);
+        add(title, BorderLayout.NORTH);
+    }
 
-    /**
-     * Initializes the top section of the panel.
-     */
-        private void initTop() {
-            JLabel title = new JLabel("Your Cart", SwingConstants.CENTER);
-            add(title, BorderLayout.NORTH);
-        }
-
-    /**
-     * Initializes the center section containing cart items.
-     */
     private void initCenter() {
         itemsPanel = new JPanel();
         itemsPanel.setLayout(new BoxLayout(itemsPanel, BoxLayout.Y_AXIS));
         add(new JScrollPane(itemsPanel), BorderLayout.CENTER);
     }
 
-    /**
-     * Initializes the bottom section with total and checkout button.
-     */
     private void initBottom() {
         JPanel bottom = new JPanel(new BorderLayout());
 
@@ -77,13 +62,8 @@ public class CartPanel extends JPanel {
         bottom.add(checkoutButton, BorderLayout.EAST);
 
         add(bottom, BorderLayout.SOUTH);
-        checkoutButton.addActionListener(e -> {
-            JFrame parent = (JFrame) SwingUtilities.getWindowAncestor(this);
-            CheckoutDialog dialog = new CheckoutDialog(parent, cart, engine);
-            dialog.setVisible(true);
-        });
 
-
+        checkoutButton.addActionListener(e -> controller.checkout());
     }
 
     /**
@@ -100,5 +80,15 @@ public class CartPanel extends JPanel {
 
         revalidate();
         repaint();
+    }
+
+    // תוספות בשביל CartController
+
+    public void refreshItems() {
+        refresh();
+    }
+
+    public void updateTotal() {
+        refresh();
     }
 }

@@ -7,6 +7,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.File;
+import java.util.concurrent.Future;
 
 public class AdminPanel extends JPanel {
 
@@ -57,6 +58,19 @@ public class AdminPanel extends JPanel {
         buttonLoad.addActionListener(e -> onLoadProducts());
     }
 
+    private void waitAndNotify(Future<?> future, String successMessage, String failPrefix) {
+        new Thread(() -> {
+            try {
+                future.get();
+                SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(this, successMessage));
+            } catch (Exception ex) {
+                SwingUtilities.invokeLater(() ->
+                        JOptionPane.showMessageDialog(this, failPrefix + ex.getMessage())
+                );
+            }
+        }).start();
+    }
+
     private void onAddProduct() {
         String name = JOptionPane.showInputDialog(this, "Product name:");
         if (name == null || name.isBlank()) return;
@@ -96,8 +110,8 @@ public class AdminPanel extends JPanel {
             imagePath = "images/default.png";
         }
 
-        controller.addSimpleProduct(name.trim(), price, stock, description.trim(), category, imagePath);
-        JOptionPane.showMessageDialog(this, "Add request sent");
+        Future<?> f = controller.addSimpleProduct(name.trim(), price, stock, description.trim(), category, imagePath);
+        waitAndNotify(f, "Product added", "Add failed: ");
     }
 
     private void onUpdateStock() {
@@ -126,24 +140,24 @@ public class AdminPanel extends JPanel {
             return;
         }
 
-        controller.updateStockByName(name.trim(), category, newStock);
-        JOptionPane.showMessageDialog(this, "Update request sent");
+        Future<?> f = controller.updateStockByName(name.trim(), category, newStock);
+        waitAndNotify(f, "Stock updated", "Update failed: ");
     }
 
     private void onSaveProducts() {
         String path = chooseCsvSavePath();
         if (path == null) return;
 
-        controller.saveProducts(path);
-        JOptionPane.showMessageDialog(this, "Save request sent");
+        Future<?> f = controller.saveProducts(path);
+        waitAndNotify(f, "Saved successfully", "Save failed: ");
     }
 
     private void onLoadProducts() {
         String path = chooseCsvOpenPath();
         if (path == null) return;
 
-        controller.loadProducts(path);
-        JOptionPane.showMessageDialog(this, "Load request sent");
+        Future<?> f = controller.loadProducts(path);
+        waitAndNotify(f, "Loaded successfully", "Load failed: ");
     }
 
     private String chooseImagePath() {

@@ -19,6 +19,5 @@ public class AdminWindow extends JFrame {
         setContentPane(new AdminPanel(controller));
         pack();
         setLocationRelativeTo(null);
-        setVisible(true);
     }
 }
